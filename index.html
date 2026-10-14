@@ -128,11 +128,12 @@ html[data-mode="day"] .bg-night{opacity:0}
 .env-flap{clip-path:polygon(0 0,100% 0,100% 35.7%,50% 64.9%,0 35.7%);backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .env-flap-back{position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 35.7%,50% 64.9%,0 35.7%);transform:rotateX(180deg);backface-visibility:hidden;-webkit-backface-visibility:hidden;
   background:linear-gradient(180deg,#C99088,#B47C76 70%,#A86E69)}
-.env-tap,.env-msg{position:absolute;left:0;right:0;text-align:center;font-family:var(--script);color:#7A3A3E;
-  text-shadow:0 1px 0 rgba(255,236,228,.7),0 -1px 0 rgba(110,40,45,.25);padding:0 12%;transition:opacity .15s linear}
+.env-tap,.env-msg{position:absolute;left:0;right:0;text-align:center;font-family:var(--script);padding:0 12%;transition:opacity .15s linear;
+  color:#7A4A1E;background:linear-gradient(180deg,#9A6426 0%,#6E3F14 55%,#8A5520 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 1px 0 rgba(255,232,214,.75)) drop-shadow(0 -.5px 0 rgba(70,35,10,.35)) drop-shadow(0 0 10px rgba(255,226,206,.45))}
 .env-tap{top:15%;font-size:clamp(30px,8.5vw,40px)}
 .env-msg{top:76%;font-size:clamp(22px,6vw,29px);line-height:1.35}
-.env-msg b{font-weight:400;font-size:1.2em;color:#6A2B33}
+.env-msg b{font-weight:400;font-size:1.2em}
 .seal{position:absolute;left:50%;top:64.9%;width:23%;aspect-ratio:1;transform:translate(-50%,-50%);transition:transform .35s ease,opacity .35s ease;
   filter:drop-shadow(0 6px 8px rgba(70,25,25,.35))}
 .seal img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
