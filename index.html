@@ -254,6 +254,23 @@ html[data-mode="night"] .tab[aria-selected="true"]{color:#1C1120}
 
 /* ---------- Venue + RSVP ---------- */
 .venue{max-width:480px;margin:26px auto 0;background:var(--surface);border:1px solid var(--line);border-radius:200px 200px 14px 14px;padding:44px 22px 30px}
+.vmap{display:block;position:relative;margin:4px auto 0;border-radius:14px;overflow:hidden;border:1px solid var(--line);text-decoration:none;
+  box-shadow:0 16px 30px -22px rgba(0,0,0,.55);transition:transform .3s ease,box-shadow .3s ease}
+.vmap:hover{transform:translateY(-3px);box-shadow:0 22px 36px -22px rgba(0,0,0,.6)}
+.vmap>svg{display:block;width:100%;height:auto;aspect-ratio:400/260}
+.vmap-cta{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:inline-flex;align-items:center;gap:8px;white-space:nowrap;
+  font-family:var(--label);letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:var(--surface);background:var(--deep);padding:10px 16px;border-radius:40px;
+  box-shadow:0 6px 16px -6px rgba(0,0,0,.5)}
+.vmap-cta svg{width:15px;height:15px}
+.pin{transform-origin:262px 96px}
+@media (prefers-reduced-motion:no-preference){
+  .route{animation:dash 1.6s linear infinite}
+  .pin{animation:drop 2.4s cubic-bezier(.3,.7,.4,1) infinite}
+  .pulse{transform-origin:262px 96px;animation:ring 2.4s ease-out infinite}
+}
+@keyframes dash{to{stroke-dashoffset:-28}}
+@keyframes drop{0%,100%{transform:translateY(0)}12%{transform:translateY(-12px)}24%{transform:translateY(0) scaleY(.92)}32%{transform:translateY(0)}}
+@keyframes ring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.6);opacity:0}}
 .venue h3{font-family:var(--serif);font-weight:600;font-size:26px;color:var(--deep);margin:8px 0 18px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--label);letter-spacing:.18em;text-transform:uppercase;font-size:12px;
   color:var(--surface);background:var(--deep);padding:14px 26px;border-radius:40px;text-decoration:none;border:0;cursor:pointer;transition:background .3s,transform .2s}
@@ -425,7 +442,39 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
       <div class="venue rv">
         <div class="label">The venue</div>
         <h3>Monday Premium Imperial Gardens</h3>
-        <a class="btn" href="https://maps.app.goo.gl/gGcu62sEhHUuC5i4A" target="_blank" rel="noopener">Get directions</a>
+        <a class="vmap" href="https://maps.app.goo.gl/gGcu62sEhHUuC5i4A" target="_blank" rel="noopener" aria-label="Open venue location in Google Maps">
+          <svg viewBox="0 0 400 260" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+            <defs>
+              <pattern id="mgrid" width="26" height="26" patternUnits="userSpaceOnUse"><path d="M26 0H0V26" fill="none" style="stroke:var(--line)" stroke-width=".8"/></pattern>
+              <radialGradient id="mglow"><stop offset="0" style="stop-color:var(--rg);stop-opacity:.35"/><stop offset="1" style="stop-color:var(--rg);stop-opacity:0"/></radialGradient>
+            </defs>
+            <rect width="400" height="260" style="fill:var(--bg)"/>
+            <rect width="400" height="260" fill="url(#mgrid)" opacity=".7"/>
+            <!-- river + park -->
+            <path d="M-10 200C60 180 90 230 160 215S280 170 410 190" fill="none" style="stroke:var(--sky2)" stroke-width="16" stroke-linecap="round" opacity=".55"/>
+            <ellipse cx="320" cy="70" rx="46" ry="30" style="fill:var(--band)"/>
+            <g style="fill:var(--line)"><circle cx="305" cy="66" r="7"/><circle cx="322" cy="60" r="8"/><circle cx="338" cy="72" r="7"/><circle cx="318" cy="80" r="6"/></g>
+            <!-- roads -->
+            <g fill="none" style="stroke:var(--surface)" stroke-linecap="round">
+              <path d="M0 120H400M110 0V260M260 0V260M0 40L400 230" stroke-width="12"/>
+            </g>
+            <g fill="none" style="stroke:var(--line)" stroke-linecap="round" stroke-dasharray="2 8" stroke-width="1.4">
+              <path d="M0 120H400M110 0V260M260 0V260"/>
+            </g>
+            <!-- route -->
+            <path class="route" d="M40 230C70 200 90 160 110 120S180 120 200 120S258 110 262 96" fill="none" style="stroke:var(--rg)" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 7"/>
+            <circle cx="40" cy="230" r="6" style="fill:var(--surface);stroke:var(--rg)" stroke-width="3"/>
+            <!-- pin -->
+            <circle class="pulse" cx="262" cy="96" r="30" fill="url(#mglow)"/>
+            <ellipse cx="262" cy="98" rx="9" ry="3.5" style="fill:var(--deep)" opacity=".2"/>
+            <g class="pin">
+              <path d="M262 96c-15-20-24-32-24-44a24 24 0 0 1 48 0c0 12-9 24-24 44z" style="fill:var(--rg);stroke:var(--surface)" stroke-width="2.5"/>
+              <path d="M262 41c5 4 6 9 3 13c-1 2-2 3-3 3s-2-1-3-3c-3-4-2-9 3-13z" style="fill:var(--surface)"/>
+              <path d="M253 54c3 0 6 2 9 6c3-4 6-6 9-6" fill="none" style="stroke:var(--surface)" stroke-width="2" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <span class="vmap-cta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-7.5 7-13a7 7 0 0 0-14 0c0 5.5 7 13 7 13z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="2.6" fill="currentColor"/></svg>Tap to open in Google Maps</span>
+        </a>
       </div>
     </div>
   </section>
