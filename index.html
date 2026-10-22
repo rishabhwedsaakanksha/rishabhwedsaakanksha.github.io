@@ -945,7 +945,9 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
     function nextLine(){ if(!bag.length){ bag=lines.map(function(_,i){return i}); for(var i=bag.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=bag[i]; bag[i]=bag[j]; bag[j]=t } if(bag[0]===last) bag.push(bag.shift()) } last=bag.shift(); return lines[last] }
     var idleT=null, busy=false, caught=false, shown=0, X=-160, Y=0, raf=null, dustT=null, timers=[], mode="left", lastMode="";
     function later(fn,ms){ timers.push(setTimeout(fn,ms)) }
-    function arm(){ clearTimeout(idleT); if(caught||shown>=6) return; idleT=setTimeout(run,7000) }
+    function arm(){ clearTimeout(idleT); if(caught) return; idleT=setTimeout(run,5000) }
+    var sceneEl=document.getElementById("scene");
+    function onFirstPage(){ return scrollY < sceneEl.offsetHeight*0.6 }
     function dust(on){ clearInterval(dustT); if(!on) return; dustT=setInterval(function(){ var d=document.createElement("span"); d.className="dust"; if(mode==="right"){ d.style.left="auto"; d.style.right="16%" } m.appendChild(d); setTimeout(function(){ d.remove() },650) },150) }
     function put(){ m.style.transform="translate("+X.toFixed(1)+"px,"+Y.toFixed(1)+"px)" }
     function bubbleSide(){ var w=m.offsetWidth, mid=X+w/2, bw=bub.offsetWidth, onRight=mid>innerWidth/2;
@@ -975,7 +977,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       later(function(){ bub.textContent=nextLine(); bubbleSide(); bub.classList.add("on") },120);
       later(leave,5400) }
     function run(){
-      if(busy||caught||!root.classList.contains("opened")||document.hidden) return arm();
+      if(busy||caught||!root.classList.contains("opened")||document.hidden||onFirstPage()) return arm();
       busy=true; shown++;
       var modes=["left","right"].filter(function(x){ return x!==lastMode }); mode=modes[Math.random()*modes.length|0]; lastMode=mode;
       var w=m.offsetWidth, edge=Math.max(10,Math.min(innerWidth*.06,40));
@@ -1000,7 +1002,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       bub.textContent="Arre! Pakad liya? 😅 Theek hai, ab shaadi mein hi milenge! 🙏"; bubbleSide(); bub.classList.add("on");
       if(m.classList.contains("run")||mode==="peek"){ cancelAnimationFrame(raf); dust(false); m.classList.remove("run"); m.classList.add("idle"); if(mode==="peek"){ Y=0; put() } }
       later(leave,2600) });
-    ["scroll","pointerdown","keydown"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
+    ["scroll","pointerdown","pointermove","touchmove","keydown","wheel"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
     arm();
   })();
   /* ---- ornaments drawn live with a glowing golden pen tip ---- */
