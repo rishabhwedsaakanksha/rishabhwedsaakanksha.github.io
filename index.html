@@ -163,7 +163,7 @@ html:not(.opened) .scene-tx>div,html:not(.opened) .scene .bg{animation-play-stat
   linear-gradient(180deg,var(--band),var(--bg) 70%);transition:background .8s}
 .diya-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,5vw,34px);margin:0 auto 10px}
 .diya-row .g-halo{margin:0}
-.diya{width:58px;height:100px;display:block;margin-bottom:-6px}
+.diya{width:54px;height:93px;display:block;margin-bottom:-4px;filter:drop-shadow(0 0 6px rgba(255,190,90,.35))}
 .g-halo{position:relative;width:min(80px,21vw);margin:0 auto 10px}
 .diya-row{--flick:1}
 .g-halo:before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--gold) 28%,transparent),transparent 65%);filter:blur(6px);opacity:var(--flick)}
@@ -335,13 +335,10 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.armed .rv{opacity:1;transform:none;transition:none}.door{transition:none}}
 
 /* ---------- ornament draw-in ---------- */
-.orn path{stroke-dasharray:1 1}
-.armed .orn.rv path{stroke-dashoffset:1;transition:stroke-dashoffset 1.9s cubic-bezier(.45,.05,.2,1) .35s}
-.armed .orn.rv.in path{stroke-dashoffset:0}
-.orn-dot{transform-origin:110px 10px;transform-box:view-box}
-.armed .orn.rv .orn-dot{transform:scale(0);transition:transform .6s cubic-bezier(.3,1.6,.5,1) .2s}
-.armed .orn.rv.in .orn-dot{transform:scale(1)}
-@media (prefers-reduced-motion:reduce){.armed .orn.rv path{stroke-dashoffset:0;transition:none}.armed .orn.rv .orn-dot{transform:none}}
+.orn-dot{transform-origin:110px 10px;transform-box:view-box;transition:transform .6s cubic-bezier(.3,1.6,.5,1)}
+.orn.js-pen .orn-dot{transform:scale(0)}
+.orn.js-pen.drawn .orn-dot{transform:scale(1)}
+.orn .nib{opacity:0}
 /* ---------- countdown flip ---------- */
 .cd{perspective:300px}
 .cd b.flip{animation:cdflip .55s cubic-bezier(.3,.7,.3,1)}
@@ -349,19 +346,29 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
 
 /* ---------- idle surprise: the mushak with a laddoo ---------- */
-.mushak{position:fixed;z-index:34;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:0;width:92px;transform:translateX(-140px);pointer-events:none}
+.mushak{position:fixed;z-index:34;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:0;width:112px;transform:translateX(-150px);pointer-events:none}
 .mushak.go{pointer-events:auto;cursor:pointer}
-.mk-body{display:block;width:92px;height:auto;filter:drop-shadow(0 6px 6px rgba(40,10,20,.3))}
-.mushak.run .mk-body{animation:mkhop .22s ease-in-out infinite}
-.mushak.run .mk-leg{animation:mkleg .22s linear infinite}.mushak.run .mk-leg2{animation:mkleg .22s linear infinite reverse}
-.mushak.run .mk-tail{animation:mktail .3s ease-in-out infinite;transform-origin:18px 50px}
-@keyframes mkhop{50%{transform:translateY(-4px) rotate(-2deg)}}
-@keyframes mkleg{50%{transform:translateX(3px)}}
-@keyframes mktail{50%{transform:rotate(14deg)}}
+.mk-body{display:block;width:112px;height:auto;overflow:visible;filter:drop-shadow(0 6px 8px rgba(40,10,20,.28))}
 .mushak.flip .mk-body{transform:scaleX(-1)}
-.mushak.flip.run .mk-body{animation:mkhopf .22s ease-in-out infinite}
-@keyframes mkhopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-4px) rotate(2deg)}}
-.mk-bubble{position:absolute;bottom:72px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
+.mushak.run .mk-body{animation:mkhop .24s ease-in-out infinite}
+.mushak.flip.run .mk-body{animation:mkhopf .24s ease-in-out infinite}
+.mushak:not(.run) .mk-body{animation:mkidle 2.4s ease-in-out infinite}
+.mushak.flip:not(.run) .mk-body{animation:mkidlef 2.4s ease-in-out infinite}
+.mushak.run .mk-leg{animation:mkleg .24s linear infinite}.mushak.run .mk-leg2{animation:mkleg .24s linear infinite reverse}
+.mk-tail{transform-origin:30px 72px;transform-box:view-box;animation:mktail 1.4s ease-in-out infinite}
+.mushak.run .mk-tail{animation-duration:.3s}
+.mk-ear{transform-origin:98px 48px;transform-box:view-box;animation:mkear 3.1s ease-in-out infinite}
+.mk-eye{transform-origin:106px 53.5px;transform-box:view-box;animation:mkblink 3.6s infinite}
+.mk-leg,.mk-leg2{transform-box:fill-box;transform-origin:center}
+@keyframes mkhop{50%{transform:translateY(-5px) rotate(-3deg)}}
+@keyframes mkhopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-5px) rotate(3deg)}}
+@keyframes mkidle{50%{transform:translateY(-1.5px)}}
+@keyframes mkidlef{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-1.5px)}}
+@keyframes mkleg{50%{transform:translateX(5px)}}
+@keyframes mktail{50%{transform:rotate(16deg)}}
+@keyframes mkear{0%,86%,100%{transform:none}90%{transform:rotate(-14deg)}94%{transform:rotate(6deg)}}
+@keyframes mkblink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}
+.mk-bubble{position:absolute;bottom:86px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
   background:var(--surface);color:var(--deep);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);box-shadow:0 10px 24px -12px rgba(40,10,20,.5);
   font-family:var(--serif);font-size:16px;line-height:1.3;font-style:italic;opacity:0;transform:translateY(8px) scale(.9);transform-origin:0 100%;transition:opacity .35s,transform .35s cubic-bezier(.3,1.4,.5,1)}
 .mk-bubble.on{opacity:1;transform:none}
@@ -447,19 +454,37 @@ section[id]{scroll-margin-top:12px}
 <header class="topbar" id="topbar" aria-hidden="true"><div class="tb-n">Rishabh<i>&amp;</i>Aakanksha</div><div class="tb-d">9 &amp; 10 December 2026</div></header>
 <div class="mushak" id="mushak" aria-hidden="true">
   <div class="mk-bubble" id="mkBubble"></div>
-  <svg class="mk-body" viewBox="0 0 120 80">
-    <path class="mk-tail" d="M18 50C4 48 2 34 10 30" fill="none" stroke="#B9A9A6" stroke-width="3" stroke-linecap="round"/>
-    <ellipse cx="46" cy="50" rx="30" ry="20" fill="#C9BBB8"/>
-    <ellipse cx="50" cy="56" rx="20" ry="12" fill="#DCD0CD"/>
-    <circle cx="78" cy="40" r="16" fill="#C9BBB8"/>
-    <circle cx="72" cy="24" r="9" fill="#C9BBB8"/><circle cx="72" cy="24" r="5.5" fill="#F2B8BE"/>
-    <path d="M90 42l9 3-9 3z" fill="#C9BBB8"/><circle cx="99" cy="45" r="2.6" fill="#E58A98"/>
-    <circle cx="83" cy="37" r="2.6" fill="#2B1B1E"/><circle cx="84" cy="36" r=".9" fill="#fff"/>
-    <path d="M96 47l10-2M96 49l10 2" stroke="#8E7E7B" stroke-width=".8"/>
-    <path d="M70 52l-4 6M28 56l-4 6" stroke="#B9A9A6" stroke-width="4" stroke-linecap="round" class="mk-leg"/>
-    <path d="M60 58l-2 8M38 60l-2 8" stroke="#B9A9A6" stroke-width="4" stroke-linecap="round" class="mk-leg2"/>
-    <g class="mk-laddoo"><circle cx="92" cy="58" r="10" fill="#F2A23A"/><g fill="#D9822A"><circle cx="88" cy="55" r="1.4"/><circle cx="95" cy="54" r="1.4"/><circle cx="92" cy="60" r="1.4"/><circle cx="97" cy="61" r="1.2"/><circle cx="87" cy="62" r="1.2"/></g><circle cx="89" cy="53" r="3" fill="#FFD08A" opacity=".7"/></g>
-    <path d="M82 54c4 2 7 2 9 0" stroke="#B9A9A6" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+  <svg class="mk-body" viewBox="0 0 140 100">
+    <defs>
+      <radialGradient id="mkFur" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#F6ECE8"/><stop offset=".6" stop-color="#DCC9C3"/><stop offset="1" stop-color="#B39A94"/></radialGradient>
+      <linearGradient id="mkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9AE"/><stop offset=".5" stop-color="#E2A94E"/><stop offset="1" stop-color="#A06420"/></linearGradient>
+      <radialGradient id="mkModak" cx="40%" cy="28%" r="75%"><stop offset="0" stop-color="#FFFCF2"/><stop offset="1" stop-color="#E8CF9C"/></radialGradient>
+    </defs>
+    <ellipse cx="66" cy="93" rx="42" ry="4.5" fill="rgba(40,10,20,.2)"/>
+    <path class="mk-tail" d="M30 72C12 76 4 62 12 52c4-5 11-1 7 4" fill="none" stroke="#C7ACA6" stroke-width="3.2" stroke-linecap="round"/>
+    <ellipse class="mk-leg2" cx="46" cy="87" rx="8" ry="4.5" fill="#EBB6BC"/>
+    <ellipse cx="58" cy="68" rx="33" ry="22" fill="url(#mkFur)"/>
+    <ellipse cx="64" cy="76" rx="18" ry="11" fill="#FBF3F0"/>
+    <path d="M38 54Q58 42 80 53L76 66Q58 59 42 66Z" fill="#B76E79"/>
+    <path d="M38 54Q58 42 80 53M42 66Q58 59 76 66" fill="none" stroke="url(#mkGold)" stroke-width="2.2"/>
+    <g fill="#FFE3A0"><circle cx="50" cy="58" r="1.3"/><circle cx="58" cy="56" r="1.3"/><circle cx="66" cy="57" r="1.3"/></g>
+    <path d="M58 64l-3 7h6z" fill="url(#mkGold)"/>
+    <ellipse cx="83" cy="40" rx="10" ry="12" fill="#D9C4BE"/><ellipse cx="83" cy="41" rx="6" ry="8" fill="#F4B8C0"/>
+    <circle cx="94" cy="57" r="18" fill="url(#mkFur)"/>
+    <path d="M106 51Q124 58 107 67Z" fill="url(#mkFur)"/>
+    <circle cx="121" cy="59.5" r="3.2" fill="#E07A8C"/>
+    <g class="mk-ear"><ellipse cx="98" cy="37" rx="10.5" ry="12.5" fill="url(#mkFur)"/><ellipse cx="98" cy="38" rx="6.5" ry="8.5" fill="#F4B8C0"/></g>
+    <path d="M86 42L88 31L92.5 37L97 27L101.5 37L106 31L108 42Z" fill="url(#mkGold)" stroke="#7A4612" stroke-width=".8" stroke-linejoin="round"/>
+    <circle cx="97" cy="27" r="1.8" fill="#D8344E"/><circle cx="88" cy="31" r="1.1" fill="#FFF1C9"/><circle cx="106" cy="31" r="1.1" fill="#FFF1C9"/>
+    <path d="M104.5 44.5v5" stroke="#D9342B" stroke-width="2" stroke-linecap="round"/>
+    <g class="mk-eye"><ellipse cx="106" cy="53.5" rx="3" ry="3.5" fill="#2B1B1E"/><circle cx="107" cy="52.4" r="1" fill="#fff"/></g>
+    <ellipse cx="103" cy="62" rx="4.2" ry="2.4" fill="#F4A6B2" opacity=".75"/>
+    <path d="M113 60l13-3M113 62l13 2M113 61.5l12 6" stroke="#9C8681" stroke-width=".7" fill="none"/>
+    <path d="M82 70Q92 77 102 68" stroke="url(#mkGold)" stroke-width="2.2" fill="none"/><circle cx="92" cy="74" r="2.2" fill="#D8344E" stroke="url(#mkGold)" stroke-width=".8"/>
+    <ellipse class="mk-leg" cx="80" cy="88" rx="8" ry="4.5" fill="#EBB6BC"/>
+    <g class="mk-modak"><path d="M114 66C107 74 103 82 107 88Q114 92 121 88C125 82 121 74 114 66Z" fill="url(#mkModak)" stroke="#C9A86C" stroke-width=".9"/>
+      <path d="M114 68Q109 78 110 89M114 68Q119 78 118 89M114 68V90" stroke="#D7BB86" stroke-width=".8" fill="none"/><circle cx="114" cy="65.5" r="1.6" fill="#E9C77E"/></g>
+    <ellipse cx="108" cy="81" rx="5.5" ry="4.2" fill="#F2C2C7"/>
   </svg>
 </div>
 <nav class="dock" id="dock" aria-label="Sections">
@@ -864,8 +889,18 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       for(var i=d.smoke.length-1;i>=0;i--){ var sm=d.smoke[i]; sm.y+=.55; sm.a-=.0035; if(sm.a<=0){d.smoke.splice(i,1);continue}
         var sx0=cx+sway*60+Math.sin(sm.y*.06+sm.ph)*6, sy=rimY-78-sm.y;
         g.strokeStyle="rgba(200,190,185,"+sm.a+")"; g.lineWidth=1.4; g.beginPath(); g.moveTo(sx0,sy); g.quadraticCurveTo(sx0+Math.sin(sm.ph+sm.y*.1)*8,sy-8,sx0+Math.sin(sm.ph)*3,sy-16); g.stroke() }
+      /* golden lotus diya: back petals (behind the flame) */
+      var gold=g.createLinearGradient(0,rimY-34,0,rimY+40); gold.addColorStop(0,"#FFE9AE"); gold.addColorStop(.45,"#E7B45A"); gold.addColorStop(.8,"#B57628"); gold.addColorStop(1,"#7E4C14");
+      function petal(bx,by,tx,ty,w){ var dx=tx-bx, dy=ty-by, L=Math.hypot(dx,dy), nx=-dy/L, ny=dx/L, mx=bx+dx*.5, my=by+dy*.5;
+        g.beginPath(); g.moveTo(bx,by); g.quadraticCurveTo(mx+nx*w,my+ny*w,tx,ty); g.quadraticCurveTo(mx-nx*w,my-ny*w,bx,by); g.closePath();
+        g.fillStyle=gold; g.fill(); g.strokeStyle="#7A4612"; g.lineWidth=1.5; g.stroke();
+        g.strokeStyle="rgba(255,240,200,.55)"; g.lineWidth=1; g.beginPath(); g.moveTo(bx+dx*.18,by+dy*.18); g.lineTo(bx+dx*.82,by+dy*.82); g.stroke() }
+      petal(cx,rimY+18,cx-24,rimY-30,11); petal(cx,rimY+18,cx+24,rimY-30,11);
+      var oil=g.createLinearGradient(0,rimY-9,0,rimY+3); oil.addColorStop(0,"#5a2a10"); oil.addColorStop(1,"#C8892F");
+      g.fillStyle=oil; g.beginPath(); g.ellipse(cx,rimY-4,26,5,0,0,7); g.fill();
+      g.fillStyle="rgba(255,226,160,"+(.7*fl)+")"; g.beginPath(); g.ellipse(cx+sway*5,rimY-5,8,1.8,0,0,7); g.fill();
       /* flame */
-      var fh=74*fl, fw=11+1.5*noise(t*3,d.ph), tipX=cx+sway*fh*.9, tipY=rimY-10-fh, bx=cx, by=rimY-8;
+      var fh=66*fl, fw=10+1.4*noise(t*3,d.ph), tipX=cx+sway*fh*.9, tipY=rimY-10-fh, bx=cx, by=rimY-7;
       g.save(); g.globalCompositeOperation="lighter";
       var gl=g.createRadialGradient(cx+sway*20,by-fh*.45,2,cx+sway*20,by-fh*.45,Math.min(fh*.8,60)); gl.addColorStop(0,"rgba(255,170,60,.55)"); gl.addColorStop(1,"rgba(255,120,30,0)");
       g.fillStyle=gl; g.beginPath(); g.arc(cx+sway*20,by-fh*.45,Math.min(fh*.8,60),0,7); g.fill();
@@ -883,21 +918,20 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       g.restore();
       /* wick */
       g.strokeStyle="#3a2416"; g.lineWidth=2.2; g.beginPath(); g.moveTo(bx,rimY-1); g.lineTo(bx+sway*4,by+1); g.stroke();
-      /* clay diya */
-      var bw=56, bh=34;
-      var body=g.createLinearGradient(0,rimY,0,rimY+bh); body.addColorStop(0,"#C4683A"); body.addColorStop(.55,"#9C4524"); body.addColorStop(1,"#6E2C14");
-      g.fillStyle=body; g.beginPath(); g.moveTo(cx-bw,rimY); g.bezierCurveTo(cx-bw*.9,rimY+bh*1.15,cx+bw*.9,rimY+bh*1.15,cx+bw,rimY); g.closePath(); g.fill();
-      /* lit side */
-      var lit=g.createRadialGradient(cx,rimY-6,4,cx,rimY+10,bw); lit.addColorStop(0,"rgba(255,190,110,"+(.55*fl)+")"); lit.addColorStop(1,"rgba(255,160,90,0)");
-      g.fillStyle=lit; g.beginPath(); g.moveTo(cx-bw,rimY); g.bezierCurveTo(cx-bw*.9,rimY+bh*1.15,cx+bw*.9,rimY+bh*1.15,cx+bw,rimY); g.closePath(); g.fill();
-      /* painted dots + gold band */
-      g.strokeStyle="#E6C27A"; g.lineWidth=2; g.beginPath(); g.moveTo(cx-bw*.86,rimY+9); g.quadraticCurveTo(cx,rimY+20,cx+bw*.86,rimY+9); g.stroke();
-      g.fillStyle="#F3D89B"; for(var k=-3;k<=3;k++){ var dx=k*13, dy=rimY+16+Math.abs(k)*-1.4+ (k===0?2:0); g.beginPath(); g.arc(cx+dx,dy+ (9-Math.abs(k)*1.2),1.8,0,7); g.fill() }
-      /* oil surface + rim */
-      var oil=g.createLinearGradient(0,rimY-7,0,rimY+7); oil.addColorStop(0,"#5a2a10"); oil.addColorStop(1,"#C8892F");
-      g.fillStyle=oil; g.beginPath(); g.ellipse(cx,rimY,bw,7,0,0,7); g.fill();
-      g.strokeStyle="#E9B26A"; g.lineWidth=2.2; g.beginPath(); g.ellipse(cx,rimY,bw,7,0,0,7); g.stroke();
-      g.fillStyle="rgba(255,220,150,"+(.6*fl)+")"; g.beginPath(); g.ellipse(cx+sway*6,rimY-1,10,2.2,0,0,7); g.fill();
+      /* pedestal */
+      g.fillStyle=gold; g.strokeStyle="#7A4612"; g.lineWidth=1.4;
+      g.beginPath(); g.moveTo(cx-7,rimY+22); g.lineTo(cx+7,rimY+22); g.lineTo(cx+5,rimY+38); g.lineTo(cx-5,rimY+38); g.closePath(); g.fill(); g.stroke();
+      g.beginPath(); g.ellipse(cx,rimY+42,24,6,0,0,7); g.fill(); g.stroke();
+      g.beginPath(); g.ellipse(cx,rimY+38,10,3,0,0,7); g.fill(); g.stroke();
+      /* front petals of the lotus */
+      petal(cx,rimY+24,cx-56,rimY-8,13); petal(cx,rimY+24,cx+56,rimY-8,13);
+      petal(cx,rimY+24,cx-32,rimY-16,13); petal(cx,rimY+24,cx+32,rimY-16,13);
+      petal(cx,rimY+26,cx,rimY+2,15);
+      /* flame-lit sheen on the gold */
+      var sh=g.createRadialGradient(cx,rimY-6,2,cx,rimY+6,58); sh.addColorStop(0,"rgba(255,236,170,"+(.45*fl)+")"); sh.addColorStop(1,"rgba(255,220,150,0)");
+      g.save(); g.globalCompositeOperation="lighter"; g.fillStyle=sh; g.fillRect(cx-60,rimY-20,120,70); g.restore();
+      /* tiny gold beads like the Ganesh mukut */
+      g.fillStyle="#FFE3A0"; [-44,-22,0,22,44].forEach(function(o,i){ g.beginPath(); g.arc(cx+o,rimY+(i===2?16:8)+Math.abs(o)*.05,1.7,0,7); g.fill() });
       if(row) row.style.setProperty("--flick",(0.82+0.18*fl).toFixed(3));
     }
     function loop(now){ var t=now/1000;
@@ -915,31 +949,55 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   /* ---- idle surprise: if a guest lingers, Ganesh ji's mushak scurries in with a laddoo ---- */
   (function(){
     var m=document.getElementById("mushak"), bub=document.getElementById("mkBubble"); if(!m||reduce) return;
-    var lines=["Psst… still here? 🐭 Ganesh ji sent me to remind you — please RSVP!",
-               "This laddoo is mine… but the wedding mithai is all yours! 🍬",
-               "Practising your Sangeet steps already? Good, the dance floor needs you! 💃",
-               "Don't be late for the Baraat… I'm only small, I can't hold the dhol alone! 🥁",
-               "Wedding diet starts after 10 December. Not before. 😋"];
+    var lines=["Arre! Abhi tak yahin ho? 🐭 Ganesh ji ne bheja hai, jaldi RSVP karo!",
+               "Ye modak mera hai… shaadi ki mithai saari aapki! 😋",
+               "Sangeet ki practice shuru kar di na? Dance floor aapka wait kar raha hai! 💃",
+               "Baraat mein late mat hona… main itna chhota hoon, dhol akele nahi utha sakta! 🥁",
+               "Diet-shiet sab 10 December ke baad! Pehle shaadi ka khana 😄"];
     var idleT=null, busy=false, shown=0, li=0, W0=innerWidth;
-    function arm(){ clearTimeout(idleT); if(shown>=4) return; idleT=setTimeout(run, shown?30000:22000) }
+    function arm(){ clearTimeout(idleT); if(shown>=4) return; idleT=setTimeout(run, shown?14000:7000) }
     function place(x,flip,dur){ m.style.transition="transform "+dur+"ms linear"; m.style.transform="translateX("+x+"px)"; m.classList.toggle("flip",!!flip) }
     function run(){
       if(busy || !root.classList.contains("opened") || document.hidden) return arm();
       busy=true; shown++; var W0=innerWidth, stop=Math.max(16,Math.min(W0*.12,60)), fromRight=shown%2===0;
-      m.style.transition="none"; m.style.transform="translateX("+(fromRight?W0+40:-140)+"px)"; m.classList.toggle("flip",fromRight); void m.offsetWidth;
+      m.style.transition="none"; m.style.transform="translateX("+(fromRight?W0+40:-150)+"px)"; m.classList.toggle("flip",fromRight); void m.offsetWidth;
       m.classList.add("run","go");
-      var target=fromRight? W0-92-stop : stop;
+      var target=fromRight? W0-112-stop : stop;
       place(target,fromRight,1500);
       bub.style.left=fromRight?"auto":"24px"; bub.style.right=fromRight?"24px":"auto"; bub.style.borderRadius=fromRight?"16px 16px 4px 16px":"16px 16px 16px 4px";
       setTimeout(function(){ m.classList.remove("run"); bub.textContent=lines[li++%lines.length]; bub.classList.add("on") },1500);
       setTimeout(leave,1500+5200);
     }
     function leave(){ if(!busy) return; bub.classList.remove("on"); var fromRight=m.classList.contains("flip");
-      setTimeout(function(){ m.classList.add("run"); place(fromRight?-140:innerWidth+40,!fromRight,1600);
+      setTimeout(function(){ m.classList.add("run"); place(fromRight?-150:innerWidth+40,!fromRight,1600);
         setTimeout(function(){ m.classList.remove("run","go"); busy=false; arm() },1650) },300) }
-    m.addEventListener("click",function(){ if(!busy) return; var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+20,26); bub.textContent="Hehe! See you at the wedding! 🙏"; bub.classList.add("on") });
+    m.addEventListener("click",function(){ if(!busy) return; var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+20,26); bub.textContent="Hehe! Shaadi mein milte hain! 🙏"; bub.classList.add("on") });
     ["scroll","pointerdown","keydown"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
     arm();
+  })();
+
+  /* ---- ornaments drawn live with a glowing golden pen tip ---- */
+  (function(){
+    var NS="http://www.w3.org/2000/svg", ors=[].slice.call(document.querySelectorAll("svg.orn"));
+    ors.forEach(function(svg){
+      var paths=[].slice.call(svg.querySelectorAll("path")); svg._p=[]; svg._n=[];
+      paths.forEach(function(p){ p.removeAttribute("pathLength"); var L=p.getTotalLength(); p._L=L;
+        p.style.strokeDasharray=L+" "+L; p.style.strokeDashoffset=reduce?0:L; svg._p.push(p);
+        var n=document.createElementNS(NS,"g"); n.setAttribute("class","nib");
+        n.innerHTML='<circle r="5" fill="rgba(255,205,120,.45)"/><circle r="2.2" fill="#FFF4D6"/>'; svg.appendChild(n); svg._n.push(n) });
+      if(!reduce) svg.classList.add("js-pen");
+    });
+    function play(svg){ if(svg._done||reduce) return; svg._done=true; var t0=performance.now()+200, dur=2000;
+      function step(now){ var k=(now-t0)/dur; if(k<0){ requestAnimationFrame(step); return } if(k>1) k=1; var e=1-Math.pow(1-k,3);
+        svg._p.forEach(function(p,i){ p.style.strokeDashoffset=p._L*(1-e); var pt=p.getPointAtLength(p._L*e), n=svg._n[i];
+          n.setAttribute("transform","translate("+pt.x+" "+pt.y+")"); n.style.opacity=k<1?1:0 });
+        if(k<1) requestAnimationFrame(step); else svg.classList.add("drawn") }
+      requestAnimationFrame(step) }
+    if(!("IntersectionObserver" in window)){ ors.forEach(play); return }
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && root.classList.contains("opened")){ play(e.target); io.unobserve(e.target) } }) },{threshold:1});
+    ors.forEach(function(o){ io.observe(o) });
+    /* if the invite opens while an ornament is already on screen */
+    addEventListener("scroll",function(){ ors.forEach(function(o){ if(!o._done){ var r=o.getBoundingClientRect(); if(root.classList.contains("opened") && r.top>0 && r.bottom<innerHeight) play(o) } }) },{passive:true});
   })();
   /* ---- floating dock ---- */
   (function(){
