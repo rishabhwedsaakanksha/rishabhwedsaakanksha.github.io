@@ -938,9 +938,11 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
                "Baraat mein late mat hona… main itna chhota hoon, dhol akele nahi utha sakta! 🥁",
                "Diet-shiet sab 10 December ke baad! Pehle shaadi ka khana 😄",
                "Ganesh ji thode busy hain, isliye invite dene main aaya hoon! 🙏",
-               "Shaadi mein zaroor aana… varna aapke ghar ke saare modak main kha jaunga! 😜",
                "Psst… dulhe ke joote chupaane ka plan bana liya kya? 👟🤫",
-               "Baraat mein Ganesh ji ki official sawaari main hi hoon! 😎"];
+               "Main Ganesh ji ka assistant hoon, attendance main hi lunga! 📝",
+               "Itna scroll kar rahe ho… seedha venue pe hi aa jao na! 📍",
+               "Dulha-dulhan ki jodi dekh ke main bhi sharma gaya! 🙈",
+               "Mehendi wale haath, Sangeet wale pair aur khaane wala pet… sab ready rakhna! 😋"];
     var bag=[], last=-1;
     function nextLine(){ if(!bag.length){ bag=lines.map(function(_,i){return i}); for(var i=bag.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=bag[i]; bag[i]=bag[j]; bag[j]=t } if(bag[0]===last) bag.push(bag.shift()) } last=bag.shift(); return lines[last] }
     var idleT=null, busy=false, caught=false, shown=0, X=-160, Y=0, raf=null, dustT=null, timers=[], mode="left", lastMode="";
@@ -1014,17 +1016,20 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
         n.innerHTML='<circle r="7" fill="rgba(255,205,120,.35)"/><circle r="3.6" fill="rgba(255,225,160,.7)"/><circle r="1.8" fill="#FFFBEA"/>'; svg.appendChild(n); svg._n.push(n) });
       if(!reduce) svg.classList.add("js-pen");
     });
-    function play(svg){ if(svg._done||reduce) return; svg._done=true; var t0=performance.now()+750, dur=2300;
+    function play(svg){ if(svg._done||reduce) return; svg._done=true; var t0=performance.now()+350, dur=2300;
       function step(now){ var k=(now-t0)/dur; if(k<0){ requestAnimationFrame(step); return } if(k>1) k=1; var e=1-Math.pow(1-k,3);
         svg._p.forEach(function(p,i){ p.style.strokeDashoffset=p._L*(1-e); var pt=p.getPointAtLength(p._L*e), n=svg._n[i];
           n.setAttribute("transform","translate("+pt.x+" "+pt.y+")"); n.style.opacity=k<1?1:0 });
         if(k<1) requestAnimationFrame(step); else svg.classList.add("drawn") }
       requestAnimationFrame(step) }
-    if(!("IntersectionObserver" in window)){ ors.forEach(play); return }
-    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && root.classList.contains("opened")){ play(e.target); io.unobserve(e.target) } }) },{threshold:.85});
-    ors.forEach(function(o){ io.observe(o) });
-    /* if the invite opens while an ornament is already on screen */
-    addEventListener("scroll",function(){ ors.forEach(function(o){ if(!o._done){ var r=o.getBoundingClientRect(); if(root.classList.contains("opened") && r.top>60 && r.bottom<innerHeight-20) play(o) } }) },{passive:true});
+    /* draw only when the guest has actually arrived on that page: the line sits well inside
+       the screen and the scrolling has settled for a moment */
+    var settleT=null;
+    function check(){ if(!root.classList.contains("opened")) return; var vh=innerHeight;
+      ors.forEach(function(o){ if(o._done) return; var r=o.getBoundingClientRect(), c=(r.top+r.bottom)/2;
+        if(c>vh*.18 && c<vh*.82) play(o) }) }
+    addEventListener("scroll",function(){ clearTimeout(settleT); settleT=setTimeout(check,280) },{passive:true});
+    addEventListener("resize",function(){ clearTimeout(settleT); settleT=setTimeout(check,280) });
   })();
   /* ---- floating dock ---- */
   (function(){
