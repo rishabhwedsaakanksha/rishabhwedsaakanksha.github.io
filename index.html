@@ -331,20 +331,39 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 section[id]{scroll-margin-top:12px}
-.dock{position:fixed;z-index:35;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);opacity:0;
-  display:flex;gap:2px;max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;padding:6px;border-radius:999px;
-  background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
-  border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--surface) 35%,transparent),0 14px 30px -12px rgba(60,20,30,.45);
-  transition:transform .55s cubic-bezier(.3,.8,.3,1),opacity .4s ease,background .8s}
+.dock{position:fixed;z-index:35;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translate(-50%,150%);opacity:0;
+  display:flex;align-items:flex-end;gap:0;max-width:calc(100vw - 20px);overflow-x:auto;scrollbar-width:none;padding:8px 10px 7px;border-radius:26px 26px 18px 18px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--band) 92%,transparent));
+  backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);
+  border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);
+  box-shadow:inset 0 0 0 3px color-mix(in srgb,var(--surface) 80%,transparent),inset 0 0 0 4px color-mix(in srgb,var(--gold) 30%,transparent),0 16px 34px -14px rgba(50,15,25,.5);
+  transition:transform .6s cubic-bezier(.3,.8,.3,1),opacity .4s ease,background .8s}
 .dock::-webkit-scrollbar{display:none}
 .dock.show{transform:translate(-50%,0);opacity:1}
-.dock a{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px;padding:7px 5px 6px;border-radius:999px;text-decoration:none;
-  color:var(--muted);font-family:var(--label);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;transition:color .3s,background .3s}
-.dock svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
-.dock a.on{color:var(--surface);background:linear-gradient(140deg,var(--rg),color-mix(in srgb,var(--rg) 70%,var(--gold)))}
+.dock a{position:relative;flex:1 0 auto;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:44px;padding:9px 5px 5px;
+  border-radius:22px 22px 8px 8px;text-decoration:none;color:var(--muted);font-family:var(--label);font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;
+  transition:color .35s,background .35s}
+.dock a+a:before{content:"";position:absolute;left:0;top:30%;height:40%;width:1px;background:linear-gradient(transparent,color-mix(in srgb,var(--gold) 45%,transparent),transparent)}
+.dock svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s}
+.dock a.on{color:var(--deep);background:linear-gradient(180deg,color-mix(in srgb,var(--rg-lt) 55%,transparent),transparent)}
+.dock a.on svg{color:var(--rg);transform:translateY(-2px)}
+.dock a.on:after{content:"";position:absolute;left:50%;top:2px;width:5px;height:5px;margin-left:-2.5px;transform:rotate(45deg);background:var(--gold)}
+.dock a.on+a:before,.dock a.on:before{opacity:0}
 .dock a:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
-@media (min-width:640px){.dock a{min-width:62px;font-size:9.5px}.dock svg{width:19px;height:19px}}
+@media (min-width:640px){.dock a{min-width:64px;font-size:9.5px}.dock svg{width:19px;height:19px}}
+/* ---------- Slim names header ---------- */
+#mode{width:38px;height:38px;padding:0;justify-content:center}
+#mode-tx{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ctl{top:calc(9px + env(safe-area-inset-top,0px))}
+.topbar{position:fixed;z-index:29;left:0;right:0;top:0;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:1px;text-align:center;
+  background:color-mix(in srgb,var(--surface) 86%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid color-mix(in srgb,var(--gold) 50%,transparent);box-shadow:0 10px 24px -18px rgba(50,15,25,.5);
+  transform:translateY(-110%);transition:transform .55s cubic-bezier(.3,.8,.3,1),background .8s}
+.topbar.show{transform:none}
+.topbar .tb-n{font-family:var(--script);font-size:22px;line-height:1.05;color:var(--deep)}
+.topbar .tb-n i{font-style:normal;color:var(--gold);font-size:.8em;margin:0 4px}
+.topbar .tb-d{font-family:var(--label);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--rg);padding-left:.3em}
 .footer{padding-bottom:120px}
 </style>
 
@@ -385,6 +404,7 @@ section[id]{scroll-margin-top:12px}
   </button>
 </div>
 
+<header class="topbar" id="topbar" aria-hidden="true"><div class="tb-n">Rishabh<i>&amp;</i>Aakanksha</div><div class="tb-d">9 &amp; 10 December 2026</div></header>
 <nav class="dock" id="dock" aria-label="Sections">
   <a href="#invite" data-s="invite"><svg viewBox="0 0 24 24"><path d="M4 7l8 6 8-6M4 6h16v12H4z"/></svg><span>Invite</span></a>
   <a href="#date" data-s="date"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Date</span></a>
@@ -419,7 +439,7 @@ section[id]{scroll-margin-top:12px}
       </div>
       <div class="label rv">|| Shri Ganeshaya Namah ||</div>
       <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
-      <p class="intro rv">We request your gracious presence and blessings on the auspicious occasion of the wedding celebration of</p>
+      <p class="intro rv">With heartfelt warmth, love and gratitude, we invite you to join us and bless the sacred union of</p>
       <h1 class="names">
         <span class="person rv"><span class="rg-text">Rishabh Sharma</span>
         <span class="parent">S/O Shivnarayan Sharma &amp; Usha Sharma</span></span>
@@ -728,7 +748,8 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   /* ---- floating dock ---- */
   (function(){
     var dock=document.getElementById("dock"), links=[].slice.call(dock.querySelectorAll("a")), scene=document.getElementById("scene");
-    function onScroll(){ dock.classList.toggle("show", root.classList.contains("opened") && scrollY > scene.offsetHeight*0.6) }
+    var bar=document.getElementById("topbar");
+    function onScroll(){ var on=root.classList.contains("opened") && scrollY > scene.offsetHeight*0.6; dock.classList.toggle("show",on); bar.classList.toggle("show",on) }
     addEventListener("scroll", onScroll, {passive:true}); onScroll();
     if(!("IntersectionObserver" in window)) return;
     var current=null;
