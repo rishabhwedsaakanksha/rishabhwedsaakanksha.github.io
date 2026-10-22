@@ -158,10 +158,10 @@ html[data-mode="day"] .bg-night{opacity:0}
 html:not(.opened) .scene-tx>div,html:not(.opened) .scene .bg{animation-play-state:paused!important}
 
 /* ---------- Invitation (open, soft) ---------- */
-.invite{padding-block:72px 76px;overflow:hidden;background:
+.invite{min-height:100svh;display:flex;align-items:center;justify-content:center;padding-block:64px 24px;overflow:hidden;background:
   radial-gradient(ellipse 60% 38% at 50% 18%,color-mix(in srgb,var(--rg-lt) 30%,transparent),transparent 70%),
   linear-gradient(180deg,var(--band),var(--bg) 70%);transition:background .8s}
-.g-halo{position:relative;width:min(90px,24vw);margin:0 auto 14px}
+.g-halo{position:relative;width:min(80px,21vw);margin:0 auto 10px}
 .g-halo:before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--gold) 28%,transparent),transparent 65%);filter:blur(6px)}
 .ganesh{position:relative;display:block;width:100%}
 .ganesh img{display:block;width:100%;height:auto}
@@ -180,17 +180,19 @@ html:not(.opened) .scene-tx>div,html:not(.opened) .scene .bg{animation-play-stat
 html[data-mode="day"] .ganesh{filter:drop-shadow(0 1px 0 rgba(120,70,10,.55)) drop-shadow(0 4px 10px rgba(158,106,30,.3))}
 html[data-mode="day"] .g-halo:before{background:radial-gradient(circle,rgba(255,232,200,.9),rgba(255,232,200,0) 65%)}
 .invite .label{font-size:13px;color:var(--gold);letter-spacing:.22em}
-.invite .outro{margin-top:26px}
-.invite .intro{font-style:italic;color:var(--muted);font-size:clamp(18px,4.6vw,21px);max-width:32ch;margin:18px auto 0;text-wrap:balance}
-.names{margin:26px 0 0;font-weight:400;line-height:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.invite .outro{margin-top:14px}
+.invite .orn{margin-top:12px}
+.invite .wrap{width:100%}
+.invite .intro{font-style:italic;color:var(--muted);font-size:clamp(16px,4.3vw,20px);line-height:1.45;max-width:34ch;margin:12px auto 0;text-wrap:balance}
+.names{margin:16px 0 0;font-weight:400;line-height:1;display:flex;flex-direction:column;align-items:center;gap:6px}
 .person{display:block}
 .rg-text{font-family:var(--label);font-weight:500;font-size:clamp(22px,6.2vw,38px);letter-spacing:.08em;white-space:nowrap;text-transform:uppercase;display:block;padding:0 4px;
   background:linear-gradient(100deg,var(--rg) 0%,var(--rg) 34%,var(--rg-lt) 50%,var(--rg) 66%,var(--rg) 100%);background-size:260% 100%;
   -webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;text-wrap:balance}
 @media (prefers-reduced-motion:no-preference){.rg-text{animation:shimmer 5s linear infinite}}
 @keyframes shimmer{from{background-position:120% 0}to{background-position:-140% 0}}
-.parent{display:block;font-family:var(--serif);font-size:17px;font-style:italic;color:var(--muted);margin-top:8px}
-.amp{display:block;font-family:var(--script);font-size:40px;color:var(--gold);margin:14px 0 8px}
+.parent{display:block;font-family:var(--serif);font-size:clamp(14px,3.9vw,17px);font-style:italic;color:var(--muted);margin-top:6px}
+.amp{display:block;font-family:var(--script);font-size:32px;color:var(--gold);margin:6px 0 4px}
 .ph-note{font-family:var(--label);letter-spacing:.18em;font-size:10px;text-transform:uppercase}
 
 /* ---------- Scratch hearts ---------- */
@@ -332,6 +334,7 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 section[id]{scroll-margin-top:12px}
+#invite{scroll-margin-top:0}
 .dock{position:fixed;z-index:35;left:50%;bottom:calc(12px + env(safe-area-inset-bottom,0px));transform:translate(-50%,150%);opacity:0;
   display:flex;align-items:flex-end;gap:0;max-width:calc(100vw - 20px);overflow-x:auto;scrollbar-width:none;padding:8px 10px 7px;border-radius:26px 26px 18px 18px;
   background:linear-gradient(180deg,color-mix(in srgb,var(--surface) 92%,transparent),color-mix(in srgb,var(--band) 92%,transparent));
@@ -365,7 +368,7 @@ section[id]{scroll-margin-top:12px}
 .topbar .tb-n{font-family:var(--script);font-size:22px;line-height:1.05;color:var(--deep)}
 .topbar .tb-n i{font-style:normal;color:var(--gold);font-size:.8em;margin:0 4px}
 .topbar .tb-d{font-family:var(--label);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--rg);padding-left:.3em}
-.footer{padding-bottom:120px}
+.footer{padding-bottom:90px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -751,7 +754,20 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   (function(){
     var dock=document.getElementById("dock"), links=[].slice.call(dock.querySelectorAll("a")), scene=document.getElementById("scene");
     var bar=document.getElementById("topbar");
-    function onScroll(){ var on=root.classList.contains("opened") && scrollY > scene.offsetHeight*0.6; dock.classList.toggle("show",on); bar.classList.toggle("show",on) }
+    var hideT=null, hovering=false;
+    function hideDock(){ if(!hovering) dock.classList.remove("show") }
+    function onScroll(){
+      var on=root.classList.contains("opened") && scrollY > scene.offsetHeight*0.6;
+      bar.classList.toggle("show",on);
+      clearTimeout(hideT);
+      if(!on){ dock.classList.remove("show"); return }
+      dock.classList.add("show");            /* visible while the guest is scrolling */
+      hideT=setTimeout(hideDock,1400);       /* tucks away once they stop to read */
+    }
+    dock.addEventListener("pointerenter",function(){ hovering=true; clearTimeout(hideT) });
+    dock.addEventListener("pointerleave",function(){ hovering=false; hideT=setTimeout(hideDock,1400) });
+    dock.addEventListener("focusin",function(){ clearTimeout(hideT); dock.classList.add("show") });
+    dock.addEventListener("click",function(){ clearTimeout(hideT); hideT=setTimeout(hideDock,2200) });
     addEventListener("scroll", onScroll, {passive:true}); onScroll();
     if(!("IntersectionObserver" in window)) return;
     var current=null;
