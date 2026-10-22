@@ -122,6 +122,9 @@ html[data-mode="day"] .bg-night{opacity:0}
 #env{position:fixed;inset:0;z-index:60;cursor:pointer;overflow:hidden;background:transparent;perspective:1400px}
 #env.gone{display:none}
 .env-box{position:absolute;left:50%;top:50%;width:max(100vw,56.3vh);aspect-ratio:941/1672;transform:translate(-50%,-50%);transform-style:preserve-3d}
+.env-glow{position:absolute;left:50%;top:50%;width:10%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,246,220,1) 0%,rgba(255,214,150,.75) 30%,rgba(255,190,140,0) 70%);transition:transform 1.6s cubic-bezier(.2,.7,.2,1) .35s,opacity .9s ease .35s}
+#env.open .env-glow{transform:translate(-50%,-50%) scale(14);opacity:1}
 .env-lower,.env-flap{position:absolute;inset:0;background:url(envelope.jpg) center/100% 100% no-repeat}
 .env-lower{clip-path:polygon(0 35.7%,50% 64.9%,100% 35.7%,100% 100%,0 100%);transition:transform 1.2s cubic-bezier(.55,0,.35,1) 1.05s,opacity .6s ease 1.7s}
 .env-flapwrap{position:absolute;inset:0;transform-origin:50% 0;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.45,0,.25,1) .35s,opacity .4s linear 1.25s}
@@ -330,6 +333,14 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 
 @media (prefers-reduced-motion:reduce){.armed .rv{opacity:1;transform:none;transition:none}.door{transition:none}}
 
+/* ---------- ornament draw-in ---------- */
+.armed .orn.rv{stroke-dasharray:240;stroke-dashoffset:240;transition:opacity 1s ease,transform 1s ease,stroke-dashoffset 1.8s cubic-bezier(.4,.1,.2,1) .25s}
+.armed .orn.rv.in{stroke-dashoffset:0}
+/* ---------- countdown flip ---------- */
+.cd{perspective:300px}
+.cd b.flip{animation:cdflip .55s cubic-bezier(.3,.7,.3,1)}
+@keyframes cdflip{0%{transform:rotateX(-85deg);opacity:0}100%{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
 /* ---------- Floating section dock ---------- */
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -380,6 +391,7 @@ section[id]{scroll-margin-top:12px}
 <!-- Envelope entry -->
 <div id="env" role="button" tabindex="0" aria-label="Tap to open the invitation">
   <div class="env-box">
+    <div class="env-glow" aria-hidden="true"></div>
     <div class="env-lower"></div>
     <div class="env-flapwrap"><div class="env-flap"></div><div class="env-flap-back"></div></div>
     <div class="env-tap">Tap to Open</div>
@@ -648,7 +660,7 @@ section[id]{scroll-margin-top:12px}
   <section class="footer band">
     <div class="wrap rv">
       <p class="sub" style="margin-top:0">Your presence and blessings will make our celebration complete.</p>
-      <svg class="orn" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
+      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
       <div class="fam">With love, the Sharma &amp; Tripathi families</div>
     </div>
   </section>
@@ -686,7 +698,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   var i;
   /* ---- cinematic scene (painted image + live light overlay) ---- */
   var sc=document.getElementById("scene"), scv=document.getElementById("scene-cv"), sx=scv.getContext("2d");
-  var IW=941, IH=1672, SW, SH, SD, map, stars=[], glints=[], flames=[], t0=performance.now();
+  var IW=941, IH=1672, SW, SH, SD, map, K=1, stars=[], glints=[], flames=[], lanterns=[], motes=[], lastLan=0, t0=performance.now();
   function rnd(a,b){return a+Math.random()*(b-a)}
   function sprite(col){ var c=document.createElement("canvas"); c.width=c.height=64; var g=c.getContext("2d");
     var r=g.createRadialGradient(32,32,0,32,32,32); r.addColorStop(0,"rgba(255,255,245,1)"); r.addColorStop(.2,col); r.addColorStop(1,"rgba(255,200,120,0)");
@@ -696,7 +708,8 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   function buildScene(){
     var r=sc.getBoundingClientRect(); SD=Math.min(2,devicePixelRatio||1); SW=r.width; SH=r.height;
     scv.width=SW*SD; scv.height=SH*SD; sx.setTransform(SD,0,0,SD,0,0);
-    var k=Math.max(SW/IW,SH/IH), ox=(SW-IW*k)/2, oy=SH-IH*k; map=function(x,y){return [ox+x*k,oy+y*k]};
+    var k=Math.max(SW/IW,SH/IH), ox=(SW-IW*k)/2, oy=SH-IH*k; K=k; map=function(x,y){return [ox+x*k,oy+y*k]};
+    lanterns=[]; motes=[];
     stars=[]; for(var i=0;i<90;i++){ var p=map(rnd(0,IW),rnd(0,IH*.48)); stars.push({x:p[0],y:p[1],r:rnd(.6,1.8),p:Math.random()*6.28,s:rnd(.5,1.6)}) }
     glints=[]; for(i=0;i<70;i++){ var gy=rnd(860,1090), p2=map(rnd(0,IW),gy); glints.push({x:p2[0],y:p2[1],z:rnd(6,14)*k*1.4,p:Math.random()*6.28,s:rnd(1,3)}) }
     flames=[]; for(i=0;i<26;i++){ var side=i%2?1:-1, fy=rnd(1240,1640), spread=(fy-1100)/560, fx=IW/2+side*(rnd(170,240)+spread*230);
@@ -711,6 +724,27 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
     var on=Math.min(1,Math.max(0,(t-.6)/1.5));
     for(i=0;i<glints.length;i++){ var g=glints[i], a2=Math.max(0,Math.sin(g.p+t*g.s)); sx.globalAlpha=on*a2*.55; sx.drawImage(GLOW,g.x-g.z/2,g.y-g.z/2,g.z,g.z) }
     for(i=0;i<flames.length;i++){ var f=flames[i], fl=.55+.45*Math.sin(f.p+t*6+Math.sin(t*13+i)); sx.globalAlpha=on*fl*.5; sx.drawImage(FL,f.x-f.z/2,f.y-f.z/2,f.z,f.z) }
+    /* sky lanterns drifting up from the aisle (night) */
+    if(night && t>2.2){
+      if(t-lastLan>.9 && lanterns.length<16){ lastLan=t;
+        var sp=map(rnd(IW*.18,IW*.82),rnd(IH*.56,IH*.66));
+        lanterns.push({x:sp[0],y:sp[1],y0:sp[1],vx:rnd(-.12,.12),vy:rnd(.28,.5),s:rnd(.8,1.25)*Math.max(.7,K*1.6),ph:Math.random()*6.28,born:t}) }
+      for(i=lanterns.length-1;i>=0;i--){ var L=lanterns[i]; L.y-=L.vy; L.x+=L.vx+Math.sin(t*.7+L.ph)*.18;
+        var rise=(L.y0-L.y)/L.y0, sz=L.s*(1-rise*.55)*10.5, al=Math.min(1,(t-L.born)/1.2)*Math.max(0,1-rise*1.15);
+        if(rise>.86 || L.y<-20){ lanterns.splice(i,1); continue }
+        var fl=.8+.2*Math.sin(t*5+L.ph);
+        sx.globalAlpha=al*.55*fl; sx.drawImage(GLOW,L.x-sz*2.2,L.y-sz*2.2,sz*4.4,sz*4.4);
+        sx.globalAlpha=al;
+        var lg=sx.createLinearGradient(0,L.y-sz,0,L.y+sz); lg.addColorStop(0,"#FFD9A0"); lg.addColorStop(.6,"#FF9F4A"); lg.addColorStop(1,"#E0632A");
+        sx.fillStyle=lg; sx.beginPath(); sx.moveTo(L.x-sz*.55,L.y-sz); sx.lineTo(L.x+sz*.55,L.y-sz); sx.lineTo(L.x+sz*.42,L.y+sz*.8);
+        sx.quadraticCurveTo(L.x,L.y+sz*1.02,L.x-sz*.42,L.y+sz*.8); sx.closePath(); sx.fill();
+        sx.globalAlpha=al*fl; sx.fillStyle="#FFF6D8"; sx.beginPath(); sx.arc(L.x,L.y+sz*.62,sz*.18,0,7); sx.fill() } }
+    /* golden dust motes in the sunset light (day) */
+    if(!night){
+      if(motes.length<40 && Math.random()<.5){ var mp=map(rnd(0,IW),rnd(IH*.45,IH*.95)); motes.push({x:mp[0],y:mp[1],r:rnd(.8,2.2),vy:rnd(.15,.45),ph:Math.random()*6.28,life:0}) }
+      for(i=motes.length-1;i>=0;i--){ var m=motes[i]; m.life+=.006; m.y-=m.vy; m.x+=Math.sin(t+m.ph)*.25;
+        if(m.life>=1){ motes.splice(i,1); continue }
+        sx.globalAlpha=Math.sin(m.life*Math.PI)*.85; sx.drawImage(GLOW,m.x-m.r*3,m.y-m.r*3,m.r*6,m.r*6) } }
     sx.globalAlpha=1;
   }
   var sceneVisible=true;
@@ -723,8 +757,9 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   var target = new Date("2026-12-09T09:00:00+05:30").getTime();
   var el = {d:document.getElementById("cd-d"),h:document.getElementById("cd-h"),m:document.getElementById("cd-m"),s:document.getElementById("cd-s")};
   function pad(n){return String(n).padStart(2,"0")}
+  function setv(n,v){ v=String(v); if(n.textContent===v) return; n.textContent=v; n.classList.remove("flip"); void n.offsetWidth; n.classList.add("flip") }
   function tick(){ var s=Math.floor(Math.max(0,target-Date.now())/1000);
-    el.d.textContent=Math.floor(s/86400); el.h.textContent=pad(Math.floor(s%86400/3600)); el.m.textContent=pad(Math.floor(s%3600/60)); el.s.textContent=pad(s%60) }
+    setv(el.d,Math.floor(s/86400)); setv(el.h,pad(Math.floor(s%86400/3600))); setv(el.m,pad(Math.floor(s%3600/60))); setv(el.s,pad(s%60)) }
   tick(); setInterval(tick,1000);
 
   /* ---- petals (with burst) ---- */
@@ -745,9 +780,25 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.a); ctx.globalAlpha=.85; ctx.fillStyle=p.c;
       if (p.heart){ heartPath(p.r) } else { ctx.beginPath(); ctx.moveTo(0,-p.r); ctx.bezierCurveTo(p.r*.9,-p.r*.6,p.r*.7,p.r*.6,0,p.r); ctx.bezierCurveTo(-p.r*.7,p.r*.6,-p.r*.9,-p.r*.6,0,-p.r) }
       ctx.fill(); ctx.restore() }
+    drawGlitter();
     requestAnimationFrame(draw) }
   if (!reduce) requestAnimationFrame(draw);
   function burst(x,y,n){ if(reduce) return; for(var i=0;i<n;i++) petals.push(mk(false,x,y,true)) }
+  /* gold glitter: confetti bursts + a sparkle trail that follows the guest's finger */
+  var glitter=[], GOLDS=["#F6D58E","#E9B95E","#FFF1C9","#D79A4A","#F3C9B5"];
+  function star(x,y,r){ ctx.beginPath(); for(var k=0;k<8;k++){ var a=k*Math.PI/4, rr=k%2?r*.35:r; ctx.lineTo(x+Math.cos(a)*rr,y+Math.sin(a)*rr) } ctx.closePath(); ctx.fill() }
+  function goldBurst(x,y,n){ if(reduce) return; for(var i=0;i<n;i++){ var a=Math.random()*6.28, v=2+Math.random()*7;
+    glitter.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-3,g:.14,r:2+Math.random()*3.5,a:Math.random()*6.28,va:-.2+Math.random()*.4,life:1,dec:.006+Math.random()*.006,c:GOLDS[i%GOLDS.length],kind:Math.random()<.55?"c":"s"}) } }
+  var lastSp=0;
+  addEventListener("pointermove",function(e){ if(reduce || !root.classList.contains("opened")) return; var now=performance.now(); if(now-lastSp<28) return; lastSp=now;
+    for(var i=0;i<2;i++) glitter.push({x:e.clientX+(Math.random()-.5)*10,y:e.clientY+(Math.random()-.5)*10,vx:(Math.random()-.5)*.6,vy:-.3-Math.random()*.6,g:0,r:1.6+Math.random()*2.6,a:0,va:0,life:1,dec:.025,c:GOLDS[(Math.random()*GOLDS.length)|0],kind:"s"}) },{passive:true});
+  function drawGlitter(){
+    for(var i=glitter.length-1;i>=0;i--){ var q=glitter[i]; q.vy+=q.g; q.vx*=.985; q.x+=q.vx; q.y+=q.vy; q.a+=q.va; q.life-=q.dec;
+      if(q.life<=0||q.y>H+20){ glitter.splice(i,1); continue }
+      ctx.globalAlpha=Math.max(0,q.life); ctx.fillStyle=q.c;
+      if(q.kind==="c"){ ctx.save(); ctx.translate(q.x,q.y); ctx.rotate(q.a); ctx.fillRect(-q.r,-q.r*.45,q.r*2,q.r*.9); ctx.restore() }
+      else { ctx.shadowColor="rgba(255,220,150,.9)"; ctx.shadowBlur=6; star(q.x,q.y,q.r); ctx.shadowBlur=0 } }
+    ctx.globalAlpha=1 }
 
 
   /* ---- floating dock ---- */
@@ -824,6 +875,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   function openEnv(){
     if(opened) return; opened=true;
     window.scrollTo(0,0); envEl.classList.add("open"); playMusic();
+    setTimeout(function(){ goldBurst(W/2,H*.62,90) }, reduce?0:380);
     root.classList.add("opened"); t0=performance.now();
     setTimeout(function(){ document.body.style.overflow=""; burst(W/2,H*.5,40) }, reduce?0:1500);
     setTimeout(function(){ envEl.classList.add("gone") }, reduce?0:2900);
