@@ -197,15 +197,21 @@ html[data-mode="day"] .g-halo:before{background:radial-gradient(circle,rgba(255,
 .heart{position:relative;flex:0 0 auto;width:clamp(96px,29vw,150px);aspect-ratio:1;container-type:inline-size;
   -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 92C22 70 4 54 4 32 4 16 16 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 14 0 26 10 26 26 0 22-18 38-46 60z'/%3E%3C/svg%3E") center/contain no-repeat;
           mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 92C22 70 4 54 4 32 4 16 16 6 30 6c9 0 16 5 20 12 4-7 11-12 20-12 14 0 26 10 26 26 0 22-18 38-46 60z'/%3E%3C/svg%3E") center/contain no-repeat;
-  background:radial-gradient(circle at 50% 38%,var(--surface),color-mix(in srgb,var(--rg-lt) 35%,var(--band)))}
+  background:radial-gradient(circle at 38% 30%,#FBE3DA 0%,#EDB9AE 45%,#D9958B 75%,#C27C74 100%);filter:drop-shadow(0 10px 14px rgba(90,30,40,.3))}
 .heart .in-h{position:absolute;left:0;right:0;top:44%;transform:translateY(-50%);display:flex;flex-direction:column;align-items:center;text-align:center;white-space:nowrap}
-.heart .v{font-family:var(--label);font-weight:600;font-size:21cqw;color:var(--deep);line-height:1;letter-spacing:.02em}
+.heart .v{font-family:var(--label);font-weight:600;font-size:21cqw;color:#5C2633;text-shadow:0 1px 0 rgba(255,236,226,.7);line-height:1;letter-spacing:.02em}
 .heart .v.sm{font-size:16cqw}
-.heart .c{font-family:var(--label);font-size:7.5cqw;letter-spacing:.2em;color:var(--rg);text-transform:uppercase;margin-top:5cqw;padding-left:.2em}
-.heart canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;transition:opacity .8s}
-.heart.done canvas{opacity:0;pointer-events:none}
-.scratch-hint{margin-top:16px;font-family:var(--label);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
-.revealed-msg{margin-top:14px;font-family:var(--script);font-size:34px;color:var(--rg)}
+.heart .c{font-family:var(--label);font-size:7.5cqw;letter-spacing:.2em;color:#8A3F4C;text-transform:uppercase;margin-top:5cqw;padding-left:.2em}
+.heart:after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,250,235,.75) 50%,transparent 65%);background-size:300% 100%;background-position:150% 0;pointer-events:none}
+@media (prefers-reduced-motion:no-preference){
+  .heart{animation:beat 3.2s ease-in-out infinite}
+  .heart:nth-child(2){animation-delay:.25s}.heart:nth-child(3){animation-delay:.5s}
+  .heart:after{animation:hshine 4s ease-in-out infinite}
+  .heart:nth-child(2):after{animation-delay:.4s}.heart:nth-child(3):after{animation-delay:.8s}
+}
+@keyframes beat{0%,60%,100%{transform:scale(1)}8%{transform:scale(1.07)}16%{transform:scale(.98)}24%{transform:scale(1.04)}}
+@keyframes hshine{0%{background-position:150% 0}55%,100%{background-position:-60% 0}}
+.days-line{margin-top:18px;font-family:var(--label);font-style:normal;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--rg)}
 
 .countdown{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:420px;margin:30px auto 0}
 .cd{border:1px solid var(--line);background:var(--surface);border-radius:999px 999px 10px 10px;padding:14px 4px 10px;transition:background .8s}
@@ -213,11 +219,10 @@ html[data-mode="day"] .g-halo:before{background:radial-gradient(circle,rgba(255,
 .cd span{font-family:var(--label);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}
 
 /* ---------- Timeline ---------- */
-.tabs{display:inline-flex;margin-top:24px;border:1px solid var(--line);border-radius:40px;padding:4px;background:var(--surface)}
-.tab{border:0;background:none;color:var(--muted);padding:10px 18px;border-radius:40px;cursor:pointer;font-family:var(--label);font-size:12px;letter-spacing:.14em;text-transform:uppercase}
-.tab[aria-selected="true"]{background:var(--rg);color:var(--surface)}
-html[data-mode="night"] .tab[aria-selected="true"]{color:#1C1120}
-.tl{position:relative;margin-top:34px;text-align:left}
+.dayhead{display:flex;flex-direction:column;align-items:center;gap:2px;margin:40px auto 0}
+.dayhead .dn{font-family:var(--label);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--surface);background:var(--rg);padding:6px 16px 6px calc(16px + .3em);border-radius:40px}
+.dayhead .dd{font-family:var(--serif);font-style:italic;font-size:20px;color:var(--deep);margin-top:6px}
+.tl{position:relative;margin-top:26px;text-align:left}
 .tl:before{content:"";position:absolute;top:0;bottom:0;left:50%;width:1px;background:linear-gradient(var(--line),var(--rg-lt),var(--line))}
 .ev{position:relative;width:50%;padding:0 34px 30px 0;text-align:right}
 .ev:nth-child(even){margin-left:50%;padding:0 0 30px 34px;text-align:left}
@@ -311,6 +316,26 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 .armed .rv.in{opacity:1;transform:none}
 .armed .dc.rv.in:nth-child(odd){transform:rotate(-1.5deg)}.armed .dc.rv.in:nth-child(even){transform:rotate(1.5deg)}
 @media (prefers-reduced-motion:reduce){.armed .rv{opacity:1;transform:none;transition:none}.door{transition:none}}
+
+/* ---------- Floating section dock ---------- */
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+section[id]{scroll-margin-top:12px}
+.dock{position:fixed;z-index:35;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);opacity:0;
+  display:flex;gap:2px;max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none;padding:6px;border-radius:999px;
+  background:color-mix(in srgb,var(--surface) 82%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border:1px solid color-mix(in srgb,var(--gold) 55%,transparent);
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--surface) 35%,transparent),0 14px 30px -12px rgba(60,20,30,.45);
+  transition:transform .55s cubic-bezier(.3,.8,.3,1),opacity .4s ease,background .8s}
+.dock::-webkit-scrollbar{display:none}
+.dock.show{transform:translate(-50%,0);opacity:1}
+.dock a{flex:1 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;min-width:44px;padding:7px 5px 6px;border-radius:999px;text-decoration:none;
+  color:var(--muted);font-family:var(--label);font-size:8.5px;letter-spacing:.06em;text-transform:uppercase;transition:color .3s,background .3s}
+.dock svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dock a.on{color:var(--surface);background:linear-gradient(140deg,var(--rg),color-mix(in srgb,var(--rg) 70%,var(--gold)))}
+.dock a:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+@media (min-width:640px){.dock a{min-width:62px;font-size:9.5px}.dock svg{width:19px;height:19px}}
+.footer{padding-bottom:120px}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -350,6 +375,15 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
   </button>
 </div>
 
+<nav class="dock" id="dock" aria-label="Sections">
+  <a href="#invite" data-s="invite"><svg viewBox="0 0 24 24"><path d="M4 7l8 6 8-6M4 6h16v12H4z"/></svg><span>Invite</span></a>
+  <a href="#date" data-s="date"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Date</span></a>
+  <a href="#events" data-s="events"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Events</span></a>
+  <a href="#attire" data-s="attire"><svg viewBox="0 0 24 24"><path d="M9 4l3 2 3-2 4 3-2 3-2-1v11H9V9L7 10 5 7z"/></svg><span>Attire</span></a>
+  <a href="#moments" data-s="moments"><svg viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="13" rx="2"/><circle cx="12" cy="12.5" r="3.2"/><path d="M9 6l1.2-2h3.6L15 6"/></svg><span>Photos</span></a>
+  <a href="#venue" data-s="venue"><svg viewBox="0 0 24 24"><path d="M12 21s6-6.2 6-11a6 6 0 0 0-12 0c0 4.8 6 11 6 11z"/><circle cx="12" cy="10" r="2.2"/></svg><span>Venue</span></a>
+  <a href="#rsvp-sec" data-s="rsvp-sec"><svg viewBox="0 0 24 24"><path d="M5 12l4 4 10-10"/></svg><span>RSVP</span></a>
+</nav>
 <main>
   <!-- Cinematic scene -->
   <section class="scene" id="scene" aria-label="Rishabh and Aakanksha are getting married">
@@ -362,6 +396,7 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
       <div class="nm s2">Rishabh</div>
       <div class="and s3">&amp;</div>
       <div class="nm s4">Aakanksha</div>
+      <div class="dt s5">9 &amp; 10 December 2026</div>
     </div>
     <a class="explore" href="#invite">Scroll to explore<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l6 6 6-6M6 12l6 6 6-6"/></svg></a>
   </section>
@@ -386,17 +421,16 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
     </div>
   </section>
 
-  <!-- Scratch reveal -->
-  <section class="band">
+  <!-- Save the date -->
+  <section class="band" id="date">
     <div class="wrap">
-      <div class="rv"><div class="label">Save the date</div><h2>Scratch to reveal</h2><p class="sub">Rub each heart to uncover our wedding date.</p></div>
-      <div class="hearts rv" id="hearts">
-        <div class="heart"><div class="in-h"><span class="v sm">9 &amp; 10</span><span class="c">Date</span></div><canvas></canvas></div>
-        <div class="heart"><div class="in-h"><span class="v">DEC</span><span class="c">Month</span></div><canvas></canvas></div>
-        <div class="heart"><div class="in-h"><span class="v">2026</span><span class="c">Year</span></div><canvas></canvas></div>
+      <div class="rv"><div class="label">Save the date</div><h2>Mark your calendar</h2></div>
+      <div class="hearts" aria-label="9 and 10 December 2026">
+        <div class="heart rv"><div class="in-h"><span class="v sm">9 &amp; 10</span><span class="c">Date</span></div></div>
+        <div class="heart rv"><div class="in-h"><span class="v">DEC</span><span class="c">Month</span></div></div>
+        <div class="heart rv"><div class="in-h"><span class="v">2026</span><span class="c">Year</span></div></div>
       </div>
-      <div class="scratch-hint" id="hint">Scratch all three hearts</div>
-      <div class="revealed-msg" id="revealed" hidden>We can't wait to see you!</div>
+      <p class="sub rv days-line">Wednesday &amp; Thursday</p>
       <div class="countdown rv" aria-label="Countdown to the wedding">
         <div class="cd"><b id="cd-d">56</b><span>Days</span></div>
         <div class="cd"><b id="cd-h">00</b><span>Hours</span></div>
@@ -407,30 +441,28 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
   </section>
 
   <!-- Timeline -->
-  <section>
+  <section id="events">
     <div class="wrap">
       <div class="rv"><div class="label">The celebrations</div><h2>Wedding Festivities</h2><p class="sub">All ceremonies at Monday Premium Imperial Gardens</p></div>
-      <div class="tabs rv" role="tablist">
-        <button class="tab" role="tab" id="t1" aria-selected="true" aria-controls="d1">Day 1 · Wed 9 Dec</button>
-        <button class="tab" role="tab" id="t2" aria-selected="false" aria-controls="d2">Day 2 · Thu 10 Dec</button>
-      </div>
-      <div class="tl" id="d1" role="tabpanel" aria-labelledby="t1">
+      <div class="dayhead rv"><span class="dn">Day 1</span><span class="dd">Wednesday, 9 December</span></div>
+      <div class="tl">
         <div class="ev rv"><div class="t">9:00 AM</div><h3>Tilak</h3><p>At the venue</p></div>
         <div class="ev rv"><div class="t">11:00 AM</div><h3>Floral Haldi</h3><p>Poolside area</p></div>
         <div class="ev rv"><div class="t">2:00 PM</div><h3>Mandap</h3><p>At the venue</p></div>
         <div class="ev rv"><div class="t">6:30 PM onwards</div><h3>Sangeet &amp; DJ Night</h3><p>Banquet hall</p></div>
       </div>
-      <div class="tl" id="d2" role="tabpanel" aria-labelledby="t2" hidden>
-        <div class="ev"><div class="t">3:30 PM</div><h3>Baraat</h3><p>Departs from the venue</p></div>
-        <div class="ev"><div class="t">5:30 PM</div><h3>Jaimala</h3><p>Main lawn</p></div>
-        <div class="ev"><div class="t">1:00 AM · 11 Dec</div><h3>Pheras</h3><p>In the early hours of 11 December</p></div>
-        <div class="ev"><div class="t">6:30 AM · 11 Dec</div><h3>Vidaai</h3><p>From the venue</p></div>
+      <div class="dayhead rv"><span class="dn">Day 2</span><span class="dd">Thursday, 10 December</span></div>
+      <div class="tl">
+        <div class="ev rv"><div class="t">3:30 PM</div><h3>Baraat</h3><p>Departs from the venue</p></div>
+        <div class="ev rv"><div class="t">5:30 PM</div><h3>Jaimala</h3><p>Main lawn</p></div>
+        <div class="ev rv"><div class="t">1:00 AM · 11 Dec</div><h3>Pheras</h3><p>In the early hours of 11 December</p></div>
+        <div class="ev rv"><div class="t">6:30 AM · 11 Dec</div><h3>Vidaai</h3><p>From the venue</p></div>
       </div>
     </div>
   </section>
 
   <!-- Dress code -->
-  <section class="band">
+  <section class="band" id="attire">
     <div class="wrap">
       <div class="rv"><div class="label">What to wear</div><h2>Dress Code</h2></div>
       <div class="dress">
@@ -445,7 +477,7 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
   </section>
 
   <!-- Film + gallery -->
-  <section>
+  <section id="moments">
     <div class="wrap">
       <div class="rv"><div class="label">Our story</div><h2>Moments</h2></div>
       <p class="sub rv">Glimpses from our engagement · tap the arrows to see more</p>
@@ -462,7 +494,7 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
   </section>
 
   <!-- Venue -->
-  <section class="band">
+  <section class="band" id="venue">
     <div class="wrap">
       <div class="venue rv">
         <div class="label">The venue</div>
@@ -505,7 +537,7 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
   </section>
 
   <!-- RSVP -->
-  <section>
+  <section id="rsvp-sec">
     <div class="wrap">
       <div class="rv"><div class="label">Kindly respond</div><h2>RSVP</h2><p class="sub">Let us know you're coming. Your reply goes straight to us on WhatsApp.</p></div>
       <form id="rsvp" class="rv" novalidate>
@@ -628,45 +660,20 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   if (!reduce) requestAnimationFrame(draw);
   function burst(x,y,n){ if(reduce) return; for(var i=0;i<n;i++) petals.push(mk(false,x,y,true)) }
 
-  /* ---- scratch hearts ---- */
-  var hearts=[].slice.call(document.querySelectorAll(".heart")), doneCount=0;
-  function paint(h){
-    var c=h.querySelector("canvas"), r=c.getBoundingClientRect(), d=Math.min(2,devicePixelRatio||1);
-    if (!r.width) return; c.width=r.width*d; c.height=r.height*d; var x=c.getContext("2d"); x.setTransform(d,0,0,d,0,0);
-    var g=x.createLinearGradient(0,0,r.width,r.height); g.addColorStop(0,"#C98A84"); g.addColorStop(.45,"#F1C6B8"); g.addColorStop(.55,"#E7B3A5"); g.addColorStop(1,"#A9606B");
-    x.fillStyle=g; x.fillRect(0,0,r.width,r.height);
-    x.fillStyle="rgba(255,255,255,.35)"; for (var i=0;i<40;i++){ x.beginPath(); x.arc(Math.random()*r.width,Math.random()*r.height,Math.random()*1.4,0,7); x.fill() }
-    x.fillStyle="#5C2633"; x.font="600 11px Cinzel, Georgia, serif"; x.textAlign="center"; x.fillText("SCRATCH", r.width/2, r.height*.46);
-    c._w=r.width; c._h=r.height; c._d=d;
-  }
-  hearts.forEach(function(h){
-    var c=h.querySelector("canvas"), x=c.getContext("2d"), down=false, moves=0;
-    function pos(e){ var r=c.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top] }
-    function scratch(e){ var p=pos(e); x.globalCompositeOperation="destination-out"; x.beginPath(); x.arc(p[0],p[1],Math.max(14,c._w*.13),0,7); x.fill();
-      if(++moves%6===0) check(e) }
-    function check(e){
-      var data=x.getImageData(0,0,c.width,c.height).data, clear=0, tot=0;
-      for (var i=3;i<data.length;i+=4*24){ tot++; if(data[i]===0) clear++ }
-      if (clear/tot>.5 && !h.classList.contains("done")){ h.classList.add("done"); doneCount++;
-        var r=h.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2, 18);
-        if (doneCount===3){ document.getElementById("hint").hidden=true; document.getElementById("revealed").hidden=false; burst(W/2,H*.6,70) } }
-    }
-    c.addEventListener("pointerdown",function(e){ down=true; try{c.setPointerCapture(e.pointerId)}catch(_){} scratch(e) });
-    c.addEventListener("pointermove",function(e){ if(down) scratch(e) });
-    c.addEventListener("pointerup",function(e){ down=false; check(e) });
-    c.addEventListener("pointercancel",function(){ down=false });
-  });
-  function paintAll(){ hearts.forEach(function(h){ if(!h.classList.contains("done")) paint(h) }) }
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(paintAll); paintAll();
-  var rw=innerWidth; addEventListener("resize",function(){ if(Math.abs(innerWidth-rw)>40){ rw=innerWidth; paintAll() } });
 
-  /* ---- tabs ---- */
-  var tabs=[document.getElementById("t1"),document.getElementById("t2")], panels=[document.getElementById("d1"),document.getElementById("d2")];
-  tabs.forEach(function(t,i){ t.addEventListener("click",function(){
-    tabs.forEach(function(o,j){ o.setAttribute("aria-selected", i===j?"true":"false"); panels[j].hidden = i!==j });
-    if (!reduce) panels[i].querySelectorAll(".ev").forEach(function(ev,k){ ev.animate([{opacity:0,transform:"translateY(16px)"},{opacity:1,transform:"none"}],{duration:600,delay:k*120,fill:"backwards",easing:"ease-out"}) });
-  }) });
-
+  /* ---- floating dock ---- */
+  (function(){
+    var dock=document.getElementById("dock"), links=[].slice.call(dock.querySelectorAll("a")), scene=document.getElementById("scene");
+    function onScroll(){ dock.classList.toggle("show", root.classList.contains("opened") && scrollY > scene.offsetHeight*0.6) }
+    addEventListener("scroll", onScroll, {passive:true}); onScroll();
+    if(!("IntersectionObserver" in window)) return;
+    var current=null;
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting) current=e.target.id });
+      links.forEach(function(a){ var on=a.getAttribute("data-s")===current; a.classList.toggle("on",on); if(on && dock.scrollWidth>dock.clientWidth) a.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"}) });
+    },{rootMargin:"-45% 0px -50% 0px"});
+    links.forEach(function(a){ var t=document.getElementById(a.getAttribute("data-s")); if(t) io.observe(t) });
+  })();
   /* ---- RSVP via WhatsApp ---- */
   document.getElementById("rsvp").addEventListener("submit",function(e){
     e.preventDefault();
