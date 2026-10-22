@@ -346,29 +346,22 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
 
 /* ---------- idle surprise: the mushak with a laddoo ---------- */
-.mushak{position:fixed;z-index:34;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:0;width:112px;transform:translateX(-150px);pointer-events:none}
+.mushak{position:fixed;z-index:34;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:0;width:118px;transform:translateX(-160px);pointer-events:none;will-change:transform}
 .mushak.go{pointer-events:auto;cursor:pointer}
-.mk-body{display:block;width:112px;height:auto;overflow:visible;filter:drop-shadow(0 6px 8px rgba(40,10,20,.28))}
-.mushak.flip .mk-body{transform:scaleX(-1)}
-.mushak.run .mk-body{animation:mkhop .24s ease-in-out infinite}
-.mushak.flip.run .mk-body{animation:mkhopf .24s ease-in-out infinite}
-.mushak:not(.run) .mk-body{animation:mkidle 2.4s ease-in-out infinite}
-.mushak.flip:not(.run) .mk-body{animation:mkidlef 2.4s ease-in-out infinite}
-.mushak.run .mk-leg{animation:mkleg .24s linear infinite}.mushak.run .mk-leg2{animation:mkleg .24s linear infinite reverse}
-.mk-tail{transform-origin:30px 72px;transform-box:view-box;animation:mktail 1.4s ease-in-out infinite}
-.mushak.run .mk-tail{animation-duration:.3s}
-.mk-ear{transform-origin:98px 48px;transform-box:view-box;animation:mkear 3.1s ease-in-out infinite}
-.mk-eye{transform-origin:106px 53.5px;transform-box:view-box;animation:mkblink 3.6s infinite}
-.mk-leg,.mk-leg2{transform-box:fill-box;transform-origin:center}
-@keyframes mkhop{50%{transform:translateY(-5px) rotate(-3deg)}}
-@keyframes mkhopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-5px) rotate(3deg)}}
-@keyframes mkidle{50%{transform:translateY(-1.5px)}}
-@keyframes mkidlef{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-1.5px)}}
-@keyframes mkleg{50%{transform:translateX(5px)}}
-@keyframes mktail{50%{transform:rotate(16deg)}}
-@keyframes mkear{0%,86%,100%{transform:none}90%{transform:rotate(-14deg)}94%{transform:rotate(6deg)}}
-@keyframes mkblink{0%,92%,100%{transform:none}95%{transform:scaleY(.1)}}
-.mk-bubble{position:absolute;bottom:86px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
+.mk-body{position:relative;width:118px;aspect-ratio:360/337;filter:drop-shadow(0 8px 8px rgba(40,10,20,.28))}
+.mk-body img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .12s linear}
+.mk-sit{opacity:0}
+.mushak.run .mk-run{opacity:1}.mushak.run .mk-sit{opacity:0}
+.mushak:not(.run) .mk-run{opacity:0}.mushak:not(.run) .mk-sit{opacity:1}
+.mushak.run .mk-body{animation:mkgallop .32s cubic-bezier(.4,0,.6,1) infinite;transform-origin:50% 100%}
+.mushak.land .mk-body{animation:mkland .45s cubic-bezier(.3,1.5,.5,1)}
+.mushak.idle .mk-body{animation:mkbreath 2.2s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes mkgallop{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-9px) rotate(-4deg)}50%{transform:translateY(-3px) rotate(1deg)}75%{transform:translateY(-7px) rotate(-2deg)}}
+@keyframes mkland{0%{transform:scale(1.06,.9)}60%{transform:scale(.97,1.04)}100%{transform:none}}
+@keyframes mkbreath{50%{transform:scale(1.015,.985) translateY(.5px)}}
+.mushak .dust{position:absolute;bottom:2px;left:6px;width:8px;height:8px;border-radius:50%;background:rgba(230,200,160,.55);pointer-events:none;animation:mkdust .6s ease-out forwards}
+@keyframes mkdust{to{transform:translate(-18px,-10px) scale(2.2);opacity:0}}
+.mk-bubble{position:absolute;bottom:104px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
   background:var(--surface);color:var(--deep);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);box-shadow:0 10px 24px -12px rgba(40,10,20,.5);
   font-family:var(--serif);font-size:16px;line-height:1.3;font-style:italic;opacity:0;transform:translateY(8px) scale(.9);transform-origin:0 100%;transition:opacity .35s,transform .35s cubic-bezier(.3,1.4,.5,1)}
 .mk-bubble.on{opacity:1;transform:none}
@@ -454,38 +447,10 @@ section[id]{scroll-margin-top:12px}
 <header class="topbar" id="topbar" aria-hidden="true"><div class="tb-n">Rishabh<i>&amp;</i>Aakanksha</div><div class="tb-d">9 &amp; 10 December 2026</div></header>
 <div class="mushak" id="mushak" aria-hidden="true">
   <div class="mk-bubble" id="mkBubble"></div>
-  <svg class="mk-body" viewBox="0 0 140 100">
-    <defs>
-      <radialGradient id="mkFur" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#F6ECE8"/><stop offset=".6" stop-color="#DCC9C3"/><stop offset="1" stop-color="#B39A94"/></radialGradient>
-      <linearGradient id="mkGold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE9AE"/><stop offset=".5" stop-color="#E2A94E"/><stop offset="1" stop-color="#A06420"/></linearGradient>
-      <radialGradient id="mkModak" cx="40%" cy="28%" r="75%"><stop offset="0" stop-color="#FFFCF2"/><stop offset="1" stop-color="#E8CF9C"/></radialGradient>
-    </defs>
-    <ellipse cx="66" cy="93" rx="42" ry="4.5" fill="rgba(40,10,20,.2)"/>
-    <path class="mk-tail" d="M30 72C12 76 4 62 12 52c4-5 11-1 7 4" fill="none" stroke="#C7ACA6" stroke-width="3.2" stroke-linecap="round"/>
-    <ellipse class="mk-leg2" cx="46" cy="87" rx="8" ry="4.5" fill="#EBB6BC"/>
-    <ellipse cx="58" cy="68" rx="33" ry="22" fill="url(#mkFur)"/>
-    <ellipse cx="64" cy="76" rx="18" ry="11" fill="#FBF3F0"/>
-    <path d="M38 54Q58 42 80 53L76 66Q58 59 42 66Z" fill="#B76E79"/>
-    <path d="M38 54Q58 42 80 53M42 66Q58 59 76 66" fill="none" stroke="url(#mkGold)" stroke-width="2.2"/>
-    <g fill="#FFE3A0"><circle cx="50" cy="58" r="1.3"/><circle cx="58" cy="56" r="1.3"/><circle cx="66" cy="57" r="1.3"/></g>
-    <path d="M58 64l-3 7h6z" fill="url(#mkGold)"/>
-    <ellipse cx="83" cy="40" rx="10" ry="12" fill="#D9C4BE"/><ellipse cx="83" cy="41" rx="6" ry="8" fill="#F4B8C0"/>
-    <circle cx="94" cy="57" r="18" fill="url(#mkFur)"/>
-    <path d="M106 51Q124 58 107 67Z" fill="url(#mkFur)"/>
-    <circle cx="121" cy="59.5" r="3.2" fill="#E07A8C"/>
-    <g class="mk-ear"><ellipse cx="98" cy="37" rx="10.5" ry="12.5" fill="url(#mkFur)"/><ellipse cx="98" cy="38" rx="6.5" ry="8.5" fill="#F4B8C0"/></g>
-    <path d="M86 42L88 31L92.5 37L97 27L101.5 37L106 31L108 42Z" fill="url(#mkGold)" stroke="#7A4612" stroke-width=".8" stroke-linejoin="round"/>
-    <circle cx="97" cy="27" r="1.8" fill="#D8344E"/><circle cx="88" cy="31" r="1.1" fill="#FFF1C9"/><circle cx="106" cy="31" r="1.1" fill="#FFF1C9"/>
-    <path d="M104.5 44.5v5" stroke="#D9342B" stroke-width="2" stroke-linecap="round"/>
-    <g class="mk-eye"><ellipse cx="106" cy="53.5" rx="3" ry="3.5" fill="#2B1B1E"/><circle cx="107" cy="52.4" r="1" fill="#fff"/></g>
-    <ellipse cx="103" cy="62" rx="4.2" ry="2.4" fill="#F4A6B2" opacity=".75"/>
-    <path d="M113 60l13-3M113 62l13 2M113 61.5l12 6" stroke="#9C8681" stroke-width=".7" fill="none"/>
-    <path d="M82 70Q92 77 102 68" stroke="url(#mkGold)" stroke-width="2.2" fill="none"/><circle cx="92" cy="74" r="2.2" fill="#D8344E" stroke="url(#mkGold)" stroke-width=".8"/>
-    <ellipse class="mk-leg" cx="80" cy="88" rx="8" ry="4.5" fill="#EBB6BC"/>
-    <g class="mk-modak"><path d="M114 66C107 74 103 82 107 88Q114 92 121 88C125 82 121 74 114 66Z" fill="url(#mkModak)" stroke="#C9A86C" stroke-width=".9"/>
-      <path d="M114 68Q109 78 110 89M114 68Q119 78 118 89M114 68V90" stroke="#D7BB86" stroke-width=".8" fill="none"/><circle cx="114" cy="65.5" r="1.6" fill="#E9C77E"/></g>
-    <ellipse cx="108" cy="81" rx="5.5" ry="4.2" fill="#F2C2C7"/>
-  </svg>
+  <div class="mk-body">
+    <img class="mk-run" src="mushak-run.png" alt="" width="360" height="337">
+    <img class="mk-sit" src="mushak-sit.png" alt="" width="360" height="337">
+  </div>
 </div>
 <nav class="dock" id="dock" aria-label="Sections">
   <a href="#invite" data-s="invite"><svg viewBox="0 0 24 24"><path d="M4 7l8 6 8-6M4 6h16v12H4z"/></svg><span>Invite</span></a>
@@ -954,23 +919,26 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
                "Sangeet ki practice shuru kar di na? Dance floor aapka wait kar raha hai! 💃",
                "Baraat mein late mat hona… main itna chhota hoon, dhol akele nahi utha sakta! 🥁",
                "Diet-shiet sab 10 December ke baad! Pehle shaadi ka khana 😄"];
-    var idleT=null, busy=false, shown=0, li=0, W0=innerWidth;
+    var idleT=null, busy=false, shown=0, li=0, dustT=null;
     function arm(){ clearTimeout(idleT); if(shown>=4) return; idleT=setTimeout(run, shown?14000:7000) }
-    function place(x,flip,dur){ m.style.transition="transform "+dur+"ms linear"; m.style.transform="translateX("+x+"px)"; m.classList.toggle("flip",!!flip) }
+    function move(x,dur,ease){ m.style.transition="transform "+dur+"ms "+(ease||"linear"); m.style.transform="translateX("+x+"px)" }
+    function dust(on){ clearInterval(dustT); if(!on) return; dustT=setInterval(function(){ var d=document.createElement("span"); d.className="dust"; m.appendChild(d); setTimeout(function(){ d.remove() },650) },140) }
     function run(){
       if(busy || !root.classList.contains("opened") || document.hidden) return arm();
-      busy=true; shown++; var W0=innerWidth, stop=Math.max(16,Math.min(W0*.12,60)), fromRight=shown%2===0;
-      m.style.transition="none"; m.style.transform="translateX("+(fromRight?W0+40:-150)+"px)"; m.classList.toggle("flip",fromRight); void m.offsetWidth;
-      m.classList.add("run","go");
-      var target=fromRight? W0-112-stop : stop;
-      place(target,fromRight,1500);
-      bub.style.left=fromRight?"auto":"24px"; bub.style.right=fromRight?"24px":"auto"; bub.style.borderRadius=fromRight?"16px 16px 4px 16px":"16px 16px 16px 4px";
-      setTimeout(function(){ m.classList.remove("run"); bub.textContent=lines[li++%lines.length]; bub.classList.add("on") },1500);
+      busy=true; shown++;
+      var stop=Math.max(12,Math.min(innerWidth*.08,48));
+      m.style.transition="none"; m.style.transform="translateX(-160px)"; void m.offsetWidth;
+      m.classList.remove("idle","land"); m.classList.add("run","go"); dust(true);
+      move(stop,1500,"cubic-bezier(.25,.6,.35,1)");                       /* runs in, slowing down */
+      setTimeout(function(){ dust(false); m.classList.remove("run"); m.classList.add("land");
+        setTimeout(function(){ m.classList.remove("land"); m.classList.add("idle") },450);
+        bub.textContent=lines[li++%lines.length]; bub.classList.add("on") },1500);
       setTimeout(leave,1500+5200);
     }
-    function leave(){ if(!busy) return; bub.classList.remove("on"); var fromRight=m.classList.contains("flip");
-      setTimeout(function(){ m.classList.add("run"); place(fromRight?-150:innerWidth+40,!fromRight,1600);
-        setTimeout(function(){ m.classList.remove("run","go"); busy=false; arm() },1650) },300) }
+    function leave(){ if(!busy) return; bub.classList.remove("on");
+      setTimeout(function(){ m.classList.remove("idle","land"); m.classList.add("run"); dust(true);
+        move(innerWidth+40,1700,"cubic-bezier(.55,0,.8,.4)");                /* speeds up and dashes off to the right */
+        setTimeout(function(){ dust(false); m.classList.remove("run","go"); busy=false; arm() },1750) },350) }
     m.addEventListener("click",function(){ if(!busy) return; var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+20,26); bub.textContent="Hehe! Shaadi mein milte hain! 🙏"; bub.classList.add("on") });
     ["scroll","pointerdown","keydown"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
     arm();
