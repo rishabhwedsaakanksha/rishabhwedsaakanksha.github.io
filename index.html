@@ -361,9 +361,9 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 .mushak.run .mk-run{opacity:1}.mushak.run .mk-sit{opacity:0}
 .mushak:not(.run) .mk-run{opacity:0}.mushak:not(.run) .mk-sit{opacity:1}
 .mk-shadow{position:absolute;left:18%;right:14%;bottom:-3px;height:9px;border-radius:50%;background:radial-gradient(closest-side,rgba(30,8,16,.38),rgba(30,8,16,0));transform-origin:50% 50%}
-.mushak.land .mk-body{animation:mkland .5s cubic-bezier(.3,1.5,.5,1)}
+.mushak.land .mk-body{animation:mkland .32s cubic-bezier(.3,1.4,.5,1)}
 .mushak.idle .mk-body{animation:mklive 3.2s ease-in-out infinite}
-@keyframes mkland{0%{transform:scale(1.07,.9)}55%{transform:scale(.97,1.04)}100%{transform:none}}
+@keyframes mkland{0%{transform:scale(1.04,.95)}60%{transform:scale(.99,1.02)}100%{transform:none}}
 @keyframes mklive{
   0%{transform:none}
   10%{transform:rotate(-3deg) translateY(-1px)}
@@ -966,16 +966,18 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
     function rise(fromY,toY,dur,ease,done){ cancelAnimationFrame(raf); var t0=null;
       function step(now){ if(t0===null) t0=now; var k=Math.min(1,(now-t0)/dur); Y=fromY+(toY-fromY)*ease(k); put(); if(k<1) raf=requestAnimationFrame(step); else done&&done() }
       raf=requestAnimationFrame(step) }
-    var easeIn=function(k){ return 1-Math.pow(1-k,2.4) }, easeOut=function(k){ return Math.pow(k,1.7) };
+    function prof(a,d){ var A=1-a/2-d/2; return function(k){ var p;
+        if(k<a) p=k*k/(2*a); else if(k<1-d) p=a/2+(k-a); else p=a/2+(1-d-a)+(d/2-(1-k)*(1-k)/(2*d)); return Math.min(1,p/A) } }
+    var easeIn=prof(0.0001,.2), easeOut=prof(.16,0.0001);
     var springUp=function(k){ return 1-Math.cos(k*Math.PI*1.5)*Math.exp(-k*5.5) }, sink=function(k){ return k*k };
     function talk(){ m.classList.remove("run"); m.classList.add("land");
-      later(function(){ m.classList.remove("land"); m.classList.add("idle") },500);
-      later(function(){ bub.textContent=nextLine(); bubbleSide(); bub.classList.add("on") },250);
+      later(function(){ m.classList.remove("land"); m.classList.add("idle") },320);
+      later(function(){ bub.textContent=nextLine(); bubbleSide(); bub.classList.add("on") },120);
       later(leave,5400) }
     function run(){
       if(busy||caught||!root.classList.contains("opened")||document.hidden) return arm();
       busy=true; shown++;
-      var modes=["left","right","peek"].filter(function(x){ return x!==lastMode }); mode=modes[Math.random()*modes.length|0]; lastMode=mode;
+      var modes=["left","right"].filter(function(x){ return x!==lastMode }); mode=modes[Math.random()*modes.length|0]; lastMode=mode;
       var w=m.offsetWidth, edge=Math.max(10,Math.min(innerWidth*.06,40));
       m.classList.remove("idle","land","run"); m.classList.toggle("flip",mode==="right"); Y=0;
       if(mode==="peek"){
@@ -985,14 +987,14 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
         return }
       X=mode==="left"?-160:innerWidth+40; put();
       m.classList.add("run","go"); dust(true);
-      travel(mode==="left"?edge:innerWidth-w-edge,1900,easeIn,function(){ dust(false); talk() });
+      travel(mode==="left"?edge:innerWidth-w-edge,1500,easeIn,function(){ dust(false); talk() });
     }
     function leave(){ if(!busy) return; bub.classList.remove("on");
       later(function(){
         if(mode==="peek"){ m.classList.remove("idle","land"); var below=parseFloat(getComputedStyle(m).bottom)+m.offsetWidth;
           rise(0,below,550,sink,function(){ m.classList.remove("go"); busy=false; arm() }); return }
         m.classList.remove("idle","land"); m.classList.add("run"); dust(true);
-        travel(mode==="left"?innerWidth+40:-160,2100,easeOut,function(){ dust(false); m.classList.remove("run","go"); busy=false; arm() }) },300) }
+        travel(mode==="left"?innerWidth+40:-160,1650,easeOut,function(){ dust(false); m.classList.remove("run","go"); busy=false; arm() }) },120) }
     m.addEventListener("click",function(){ if(!busy||caught) return; caught=true; clearTimeout(idleT); timers.forEach(clearTimeout); timers=[];
       var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+10,30);
       bub.textContent="Arre! Pakad liya? 😅 Theek hai, ab shaadi mein hi milenge! 🙏"; bubbleSide(); bub.classList.add("on");
@@ -1009,20 +1011,20 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       paths.forEach(function(p){ p.removeAttribute("pathLength"); var L=p.getTotalLength(); p._L=L;
         p.style.strokeDasharray=L+" "+L; p.style.strokeDashoffset=reduce?0:L; svg._p.push(p);
         var n=document.createElementNS(NS,"g"); n.setAttribute("class","nib");
-        n.innerHTML='<circle r="5" fill="rgba(255,205,120,.45)"/><circle r="2.2" fill="#FFF4D6"/>'; svg.appendChild(n); svg._n.push(n) });
+        n.innerHTML='<circle r="7" fill="rgba(255,205,120,.35)"/><circle r="3.6" fill="rgba(255,225,160,.7)"/><circle r="1.8" fill="#FFFBEA"/>'; svg.appendChild(n); svg._n.push(n) });
       if(!reduce) svg.classList.add("js-pen");
     });
-    function play(svg){ if(svg._done||reduce) return; svg._done=true; var t0=performance.now()+200, dur=2000;
+    function play(svg){ if(svg._done||reduce) return; svg._done=true; var t0=performance.now()+750, dur=2300;
       function step(now){ var k=(now-t0)/dur; if(k<0){ requestAnimationFrame(step); return } if(k>1) k=1; var e=1-Math.pow(1-k,3);
         svg._p.forEach(function(p,i){ p.style.strokeDashoffset=p._L*(1-e); var pt=p.getPointAtLength(p._L*e), n=svg._n[i];
           n.setAttribute("transform","translate("+pt.x+" "+pt.y+")"); n.style.opacity=k<1?1:0 });
         if(k<1) requestAnimationFrame(step); else svg.classList.add("drawn") }
       requestAnimationFrame(step) }
     if(!("IntersectionObserver" in window)){ ors.forEach(play); return }
-    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && root.classList.contains("opened")){ play(e.target); io.unobserve(e.target) } }) },{threshold:1});
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting && root.classList.contains("opened")){ play(e.target); io.unobserve(e.target) } }) },{threshold:.85});
     ors.forEach(function(o){ io.observe(o) });
     /* if the invite opens while an ornament is already on screen */
-    addEventListener("scroll",function(){ ors.forEach(function(o){ if(!o._done){ var r=o.getBoundingClientRect(); if(root.classList.contains("opened") && r.top>0 && r.bottom<innerHeight) play(o) } }) },{passive:true});
+    addEventListener("scroll",function(){ ors.forEach(function(o){ if(!o._done){ var r=o.getBoundingClientRect(); if(root.classList.contains("opened") && r.top>60 && r.bottom<innerHeight-20) play(o) } }) },{passive:true});
   })();
   /* ---- floating dock ---- */
   (function(){
