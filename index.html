@@ -122,9 +122,6 @@ html[data-mode="day"] .bg-night{opacity:0}
 #env{position:fixed;inset:0;z-index:60;cursor:pointer;overflow:hidden;background:transparent;perspective:1400px}
 #env.gone{display:none}
 .env-box{position:absolute;left:50%;top:50%;width:max(100vw,56.3vh);aspect-ratio:941/1672;transform:translate(-50%,-50%);transform-style:preserve-3d}
-.env-glow{position:absolute;left:50%;top:50%;width:10%;aspect-ratio:1;border-radius:50%;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;
-  background:radial-gradient(circle,rgba(255,246,220,1) 0%,rgba(255,214,150,.75) 30%,rgba(255,190,140,0) 70%);transition:transform 1.6s cubic-bezier(.2,.7,.2,1) .35s,opacity .9s ease .35s}
-#env.open .env-glow{transform:translate(-50%,-50%) scale(14);opacity:1}
 .env-lower,.env-flap{position:absolute;inset:0;background:url(envelope.jpg) center/100% 100% no-repeat}
 .env-lower{clip-path:polygon(0 35.7%,50% 64.9%,100% 35.7%,100% 100%,0 100%);transition:transform 1.2s cubic-bezier(.55,0,.35,1) 1.05s,opacity .6s ease 1.7s}
 .env-flapwrap{position:absolute;inset:0;transform-origin:50% 0;transform-style:preserve-3d;transition:transform 1.1s cubic-bezier(.45,0,.25,1) .35s,opacity .4s linear 1.25s}
@@ -164,8 +161,12 @@ html:not(.opened) .scene-tx>div,html:not(.opened) .scene .bg{animation-play-stat
 .invite{min-height:100svh;display:flex;align-items:center;justify-content:center;padding-block:64px 24px;overflow:hidden;background:
   radial-gradient(ellipse 60% 38% at 50% 18%,color-mix(in srgb,var(--rg-lt) 30%,transparent),transparent 70%),
   linear-gradient(180deg,var(--band),var(--bg) 70%);transition:background .8s}
+.diya-row{display:flex;align-items:flex-end;justify-content:center;gap:clamp(10px,5vw,34px);margin:0 auto 10px}
+.diya-row .g-halo{margin:0}
+.diya{width:58px;height:100px;display:block;margin-bottom:-6px}
 .g-halo{position:relative;width:min(80px,21vw);margin:0 auto 10px}
-.g-halo:before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--gold) 28%,transparent),transparent 65%);filter:blur(6px)}
+.diya-row{--flick:1}
+.g-halo:before{content:"";position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--gold) 28%,transparent),transparent 65%);filter:blur(6px);opacity:var(--flick)}
 .ganesh{position:relative;display:block;width:100%}
 .ganesh img{display:block;width:100%;height:auto}
 .g-shine{position:absolute;inset:0;pointer-events:none;
@@ -334,13 +335,37 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.armed .rv{opacity:1;transform:none;transition:none}.door{transition:none}}
 
 /* ---------- ornament draw-in ---------- */
-.armed .orn.rv{stroke-dasharray:240;stroke-dashoffset:240;transition:opacity 1s ease,transform 1s ease,stroke-dashoffset 1.8s cubic-bezier(.4,.1,.2,1) .25s}
-.armed .orn.rv.in{stroke-dashoffset:0}
+.orn path{stroke-dasharray:1 1}
+.armed .orn.rv path{stroke-dashoffset:1;transition:stroke-dashoffset 1.9s cubic-bezier(.45,.05,.2,1) .35s}
+.armed .orn.rv.in path{stroke-dashoffset:0}
+.orn-dot{transform-origin:110px 10px;transform-box:view-box}
+.armed .orn.rv .orn-dot{transform:scale(0);transition:transform .6s cubic-bezier(.3,1.6,.5,1) .2s}
+.armed .orn.rv.in .orn-dot{transform:scale(1)}
+@media (prefers-reduced-motion:reduce){.armed .orn.rv path{stroke-dashoffset:0;transition:none}.armed .orn.rv .orn-dot{transform:none}}
 /* ---------- countdown flip ---------- */
 .cd{perspective:300px}
 .cd b.flip{animation:cdflip .55s cubic-bezier(.3,.7,.3,1)}
 @keyframes cdflip{0%{transform:rotateX(-85deg);opacity:0}100%{transform:none;opacity:1}}
 @media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
+
+/* ---------- idle surprise: the mushak with a laddoo ---------- */
+.mushak{position:fixed;z-index:34;bottom:calc(84px + env(safe-area-inset-bottom,0px));left:0;width:92px;transform:translateX(-140px);pointer-events:none}
+.mushak.go{pointer-events:auto;cursor:pointer}
+.mk-body{display:block;width:92px;height:auto;filter:drop-shadow(0 6px 6px rgba(40,10,20,.3))}
+.mushak.run .mk-body{animation:mkhop .22s ease-in-out infinite}
+.mushak.run .mk-leg{animation:mkleg .22s linear infinite}.mushak.run .mk-leg2{animation:mkleg .22s linear infinite reverse}
+.mushak.run .mk-tail{animation:mktail .3s ease-in-out infinite;transform-origin:18px 50px}
+@keyframes mkhop{50%{transform:translateY(-4px) rotate(-2deg)}}
+@keyframes mkleg{50%{transform:translateX(3px)}}
+@keyframes mktail{50%{transform:rotate(14deg)}}
+.mushak.flip .mk-body{transform:scaleX(-1)}
+.mushak.flip.run .mk-body{animation:mkhopf .22s ease-in-out infinite}
+@keyframes mkhopf{0%,100%{transform:scaleX(-1)}50%{transform:scaleX(-1) translateY(-4px) rotate(2deg)}}
+.mk-bubble{position:absolute;bottom:72px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
+  background:var(--surface);color:var(--deep);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);box-shadow:0 10px 24px -12px rgba(40,10,20,.5);
+  font-family:var(--serif);font-size:16px;line-height:1.3;font-style:italic;opacity:0;transform:translateY(8px) scale(.9);transform-origin:0 100%;transition:opacity .35s,transform .35s cubic-bezier(.3,1.4,.5,1)}
+.mk-bubble.on{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.mushak{display:none}}
 /* ---------- Floating section dock ---------- */
 html{scroll-behavior:smooth}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -391,7 +416,6 @@ section[id]{scroll-margin-top:12px}
 <!-- Envelope entry -->
 <div id="env" role="button" tabindex="0" aria-label="Tap to open the invitation">
   <div class="env-box">
-    <div class="env-glow" aria-hidden="true"></div>
     <div class="env-lower"></div>
     <div class="env-flapwrap"><div class="env-flap"></div><div class="env-flap-back"></div></div>
     <div class="env-tap">Tap to Open</div>
@@ -421,6 +445,23 @@ section[id]{scroll-margin-top:12px}
 </div>
 
 <header class="topbar" id="topbar" aria-hidden="true"><div class="tb-n">Rishabh<i>&amp;</i>Aakanksha</div><div class="tb-d">9 &amp; 10 December 2026</div></header>
+<div class="mushak" id="mushak" aria-hidden="true">
+  <div class="mk-bubble" id="mkBubble"></div>
+  <svg class="mk-body" viewBox="0 0 120 80">
+    <path class="mk-tail" d="M18 50C4 48 2 34 10 30" fill="none" stroke="#B9A9A6" stroke-width="3" stroke-linecap="round"/>
+    <ellipse cx="46" cy="50" rx="30" ry="20" fill="#C9BBB8"/>
+    <ellipse cx="50" cy="56" rx="20" ry="12" fill="#DCD0CD"/>
+    <circle cx="78" cy="40" r="16" fill="#C9BBB8"/>
+    <circle cx="72" cy="24" r="9" fill="#C9BBB8"/><circle cx="72" cy="24" r="5.5" fill="#F2B8BE"/>
+    <path d="M90 42l9 3-9 3z" fill="#C9BBB8"/><circle cx="99" cy="45" r="2.6" fill="#E58A98"/>
+    <circle cx="83" cy="37" r="2.6" fill="#2B1B1E"/><circle cx="84" cy="36" r=".9" fill="#fff"/>
+    <path d="M96 47l10-2M96 49l10 2" stroke="#8E7E7B" stroke-width=".8"/>
+    <path d="M70 52l-4 6M28 56l-4 6" stroke="#B9A9A6" stroke-width="4" stroke-linecap="round" class="mk-leg"/>
+    <path d="M60 58l-2 8M38 60l-2 8" stroke="#B9A9A6" stroke-width="4" stroke-linecap="round" class="mk-leg2"/>
+    <g class="mk-laddoo"><circle cx="92" cy="58" r="10" fill="#F2A23A"/><g fill="#D9822A"><circle cx="88" cy="55" r="1.4"/><circle cx="95" cy="54" r="1.4"/><circle cx="92" cy="60" r="1.4"/><circle cx="97" cy="61" r="1.2"/><circle cx="87" cy="62" r="1.2"/></g><circle cx="89" cy="53" r="3" fill="#FFD08A" opacity=".7"/></g>
+    <path d="M82 54c4 2 7 2 9 0" stroke="#B9A9A6" stroke-width="3.4" stroke-linecap="round" fill="none"/>
+  </svg>
+</div>
 <nav class="dock" id="dock" aria-label="Sections">
   <a href="#invite" data-s="invite"><svg viewBox="0 0 24 24"><path d="M4 7l8 6 8-6M4 6h16v12H4z"/></svg><span>Invite</span></a>
   <a href="#date" data-s="date"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg><span>Date</span></a>
@@ -450,11 +491,15 @@ section[id]{scroll-margin-top:12px}
   <!-- Invitation -->
   <section class="invite" id="invite">
     <div class="wrap">
-      <div class="g-halo rv">
+      <div class="diya-row rv">
+      <canvas class="diya" width="140" height="240" aria-hidden="true"></canvas>
+      <div class="g-halo">
         <div class="ganesh"><img src="ganesh.png" alt="Lord Ganesha" width="392" height="640"><span class="g-shine" aria-hidden="true"></span></div>
       </div>
+      <canvas class="diya" width="140" height="240" aria-hidden="true"></canvas>
+      </div>
       <div class="label rv">|| Shri Ganeshaya Namah ||</div>
-      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
+      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><g fill="none" style="stroke:var(--gold)" stroke-width="1"><path pathLength="1" d="M110 10H138H220"/><path pathLength="1" d="M110 10H82H0"/><path pathLength="1" d="M82 10c9-8 19-8 28 0c9 8 19 8 28 0"/><path pathLength="1" d="M82 10c9 8 19 8 28 0c9-8 19-8 28 0"/></g><circle class="orn-dot" cx="110" cy="10" r="3" style="fill:var(--rg)"/></svg>
       <p class="intro rv">With the blessings of Lord Ganesha and the love of our families, we joyfully invite you to share in the happiness of the wedding of</p>
       <h1 class="names">
         <span class="person rv"><span class="rg-text">Rishabh Sharma</span>
@@ -464,7 +509,7 @@ section[id]{scroll-margin-top:12px}
         <span class="parent">D/O Geeta Tripathi</span></span>
       </h1>
       <p class="intro outro rv">Kindly grace the occasion with your presence and shower your blessings on the couple as they begin their new journey together.</p>
-      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
+      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><g fill="none" style="stroke:var(--gold)" stroke-width="1"><path pathLength="1" d="M110 10H138H220"/><path pathLength="1" d="M110 10H82H0"/><path pathLength="1" d="M82 10c9-8 19-8 28 0c9 8 19 8 28 0"/><path pathLength="1" d="M82 10c9 8 19 8 28 0c9-8 19-8 28 0"/></g><circle class="orn-dot" cx="110" cy="10" r="3" style="fill:var(--rg)"/></svg>
     </div>
   </section>
 
@@ -660,7 +705,7 @@ section[id]{scroll-margin-top:12px}
   <section class="footer band">
     <div class="wrap rv">
       <p class="sub" style="margin-top:0">Your presence and blessings will make our celebration complete.</p>
-      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><use href="#orn"/></svg>
+      <svg class="orn rv" viewBox="0 0 220 20" aria-hidden="true"><g fill="none" style="stroke:var(--gold)" stroke-width="1"><path pathLength="1" d="M110 10H138H220"/><path pathLength="1" d="M110 10H82H0"/><path pathLength="1" d="M82 10c9-8 19-8 28 0c9 8 19 8 28 0"/><path pathLength="1" d="M82 10c9 8 19 8 28 0c9-8 19-8 28 0"/></g><circle class="orn-dot" cx="110" cy="10" r="3" style="fill:var(--rg)"/></svg>
       <div class="fam">With love, the Sharma &amp; Tripathi families</div>
     </div>
   </section>
@@ -801,6 +846,101 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
     ctx.globalAlpha=1 }
 
 
+
+  /* ---- living diyas: real-feel flames that flicker, smoke, and bend when you swipe past ---- */
+  (function(){
+    var cvs=[].slice.call(document.querySelectorAll(".diya")); if(!cvs.length) return;
+    var row=document.querySelector(".diya-row"), visible=false, wind=0, windV=0, lastX=null, lastY=null, lastSY=scrollY;
+    var D=cvs.map(function(c){ return {c:c,x:c.getContext("2d"),ph:Math.random()*10,smoke:[]} });
+    function noise(t,s){ return Math.sin(t*1.7+s)*.5+Math.sin(t*3.1+s*2)*.3+Math.sin(t*7.3+s*.5)*.2 }
+    function drawOne(d,t){
+      var g=d.x, W=140, H=240, cx=70, rimY=178; g.clearRect(0,0,W,H);
+      var gust=wind*(d===D[0]?1:.85), fl=1+.07*noise(t*2.2,d.ph), sway=(noise(t*1.4,d.ph+3)*.08+gust)*1;
+      /* warm light pool */
+      var lp=g.createRadialGradient(cx,rimY-34,4,cx,rimY-34,64); lp.addColorStop(0,"rgba(255,190,90,"+(.30*fl)+")"); lp.addColorStop(1,"rgba(255,170,80,0)");
+      g.fillStyle=lp; g.fillRect(0,0,W,H);
+      /* smoke wisps */
+      if(Math.random()<.05) d.smoke.push({y:0,x:0,a:.22,ph:Math.random()*6});
+      for(var i=d.smoke.length-1;i>=0;i--){ var sm=d.smoke[i]; sm.y+=.55; sm.a-=.0035; if(sm.a<=0){d.smoke.splice(i,1);continue}
+        var sx0=cx+sway*60+Math.sin(sm.y*.06+sm.ph)*6, sy=rimY-78-sm.y;
+        g.strokeStyle="rgba(200,190,185,"+sm.a+")"; g.lineWidth=1.4; g.beginPath(); g.moveTo(sx0,sy); g.quadraticCurveTo(sx0+Math.sin(sm.ph+sm.y*.1)*8,sy-8,sx0+Math.sin(sm.ph)*3,sy-16); g.stroke() }
+      /* flame */
+      var fh=74*fl, fw=11+1.5*noise(t*3,d.ph), tipX=cx+sway*fh*.9, tipY=rimY-10-fh, bx=cx, by=rimY-8;
+      g.save(); g.globalCompositeOperation="lighter";
+      var gl=g.createRadialGradient(cx+sway*20,by-fh*.45,2,cx+sway*20,by-fh*.45,Math.min(fh*.8,60)); gl.addColorStop(0,"rgba(255,170,60,.55)"); gl.addColorStop(1,"rgba(255,120,30,0)");
+      g.fillStyle=gl; g.beginPath(); g.arc(cx+sway*20,by-fh*.45,Math.min(fh*.8,60),0,7); g.fill();
+      function flame(scale,c0,c1,c2){ var w=fw*scale, h=fh*scale;
+        var gr=g.createLinearGradient(0,by,0,by-h); gr.addColorStop(0,c0); gr.addColorStop(.35,c1); gr.addColorStop(1,c2); g.fillStyle=gr;
+        var tx=bx+(tipX-bx)*scale, ty=by-h;
+        g.beginPath(); g.moveTo(bx,by+2);
+        g.bezierCurveTo(bx-w*1.25,by-h*.18, bx-w*.9+(tx-bx)*.35,by-h*.55, tx,ty);
+        g.bezierCurveTo(bx+w*.9+(tx-bx)*.35,by-h*.55, bx+w*1.25,by-h*.18, bx,by+2); g.fill() }
+      flame(1,"rgba(255,120,30,.95)","rgba(255,150,40,.85)","rgba(255,90,20,0)");
+      flame(.72,"rgba(255,220,120,1)","rgba(255,200,80,.95)","rgba(255,160,50,0)");
+      flame(.42,"rgba(255,255,240,1)","rgba(255,248,210,1)","rgba(255,230,160,0)");
+      var cr=g.createRadialGradient(bx,by-4,0,bx,by-4,7); cr.addColorStop(0,"rgba(120,170,255,.75)"); cr.addColorStop(1,"rgba(120,170,255,0)");
+      g.fillStyle=cr; g.beginPath(); g.arc(bx,by-4,7,0,7); g.fill();
+      g.restore();
+      /* wick */
+      g.strokeStyle="#3a2416"; g.lineWidth=2.2; g.beginPath(); g.moveTo(bx,rimY-1); g.lineTo(bx+sway*4,by+1); g.stroke();
+      /* clay diya */
+      var bw=56, bh=34;
+      var body=g.createLinearGradient(0,rimY,0,rimY+bh); body.addColorStop(0,"#C4683A"); body.addColorStop(.55,"#9C4524"); body.addColorStop(1,"#6E2C14");
+      g.fillStyle=body; g.beginPath(); g.moveTo(cx-bw,rimY); g.bezierCurveTo(cx-bw*.9,rimY+bh*1.15,cx+bw*.9,rimY+bh*1.15,cx+bw,rimY); g.closePath(); g.fill();
+      /* lit side */
+      var lit=g.createRadialGradient(cx,rimY-6,4,cx,rimY+10,bw); lit.addColorStop(0,"rgba(255,190,110,"+(.55*fl)+")"); lit.addColorStop(1,"rgba(255,160,90,0)");
+      g.fillStyle=lit; g.beginPath(); g.moveTo(cx-bw,rimY); g.bezierCurveTo(cx-bw*.9,rimY+bh*1.15,cx+bw*.9,rimY+bh*1.15,cx+bw,rimY); g.closePath(); g.fill();
+      /* painted dots + gold band */
+      g.strokeStyle="#E6C27A"; g.lineWidth=2; g.beginPath(); g.moveTo(cx-bw*.86,rimY+9); g.quadraticCurveTo(cx,rimY+20,cx+bw*.86,rimY+9); g.stroke();
+      g.fillStyle="#F3D89B"; for(var k=-3;k<=3;k++){ var dx=k*13, dy=rimY+16+Math.abs(k)*-1.4+ (k===0?2:0); g.beginPath(); g.arc(cx+dx,dy+ (9-Math.abs(k)*1.2),1.8,0,7); g.fill() }
+      /* oil surface + rim */
+      var oil=g.createLinearGradient(0,rimY-7,0,rimY+7); oil.addColorStop(0,"#5a2a10"); oil.addColorStop(1,"#C8892F");
+      g.fillStyle=oil; g.beginPath(); g.ellipse(cx,rimY,bw,7,0,0,7); g.fill();
+      g.strokeStyle="#E9B26A"; g.lineWidth=2.2; g.beginPath(); g.ellipse(cx,rimY,bw,7,0,0,7); g.stroke();
+      g.fillStyle="rgba(255,220,150,"+(.6*fl)+")"; g.beginPath(); g.ellipse(cx+sway*6,rimY-1,10,2.2,0,0,7); g.fill();
+      if(row) row.style.setProperty("--flick",(0.82+0.18*fl).toFixed(3));
+    }
+    function loop(now){ var t=now/1000;
+      windV+=(-wind*0.09)-windV*0.12; wind+=windV; wind*=0.985;
+      if(visible) D.forEach(function(d){ drawOne(d,t) });
+      requestAnimationFrame(loop) }
+    function gustFrom(vx){ windV+=Math.max(-.12,Math.min(.12,vx*.0025)) }
+    addEventListener("pointermove",function(e){ if(lastX!=null){ var r=row.getBoundingClientRect(); if(e.clientY>r.top-160&&e.clientY<r.bottom+160) gustFrom(e.clientX-lastX) } lastX=e.clientX; lastY=e.clientY },{passive:true});
+    addEventListener("scroll",function(){ var v=scrollY-lastSY; lastSY=scrollY; if(visible) windV+=Math.max(-.05,Math.min(.05,v*.0012))*(Math.random()<.5?-1:1) },{passive:true});
+    if("IntersectionObserver" in window) new IntersectionObserver(function(es){ visible=es[0].isIntersecting }).observe(row); else visible=true;
+    D.forEach(function(d){ drawOne(d,0) });
+    if(!reduce) requestAnimationFrame(loop);
+  })();
+
+  /* ---- idle surprise: if a guest lingers, Ganesh ji's mushak scurries in with a laddoo ---- */
+  (function(){
+    var m=document.getElementById("mushak"), bub=document.getElementById("mkBubble"); if(!m||reduce) return;
+    var lines=["Psst… still here? 🐭 Ganesh ji sent me to remind you — please RSVP!",
+               "This laddoo is mine… but the wedding mithai is all yours! 🍬",
+               "Practising your Sangeet steps already? Good, the dance floor needs you! 💃",
+               "Don't be late for the Baraat… I'm only small, I can't hold the dhol alone! 🥁",
+               "Wedding diet starts after 10 December. Not before. 😋"];
+    var idleT=null, busy=false, shown=0, li=0, W0=innerWidth;
+    function arm(){ clearTimeout(idleT); if(shown>=4) return; idleT=setTimeout(run, shown?30000:22000) }
+    function place(x,flip,dur){ m.style.transition="transform "+dur+"ms linear"; m.style.transform="translateX("+x+"px)"; m.classList.toggle("flip",!!flip) }
+    function run(){
+      if(busy || !root.classList.contains("opened") || document.hidden) return arm();
+      busy=true; shown++; var W0=innerWidth, stop=Math.max(16,Math.min(W0*.12,60)), fromRight=shown%2===0;
+      m.style.transition="none"; m.style.transform="translateX("+(fromRight?W0+40:-140)+"px)"; m.classList.toggle("flip",fromRight); void m.offsetWidth;
+      m.classList.add("run","go");
+      var target=fromRight? W0-92-stop : stop;
+      place(target,fromRight,1500);
+      bub.style.left=fromRight?"auto":"24px"; bub.style.right=fromRight?"24px":"auto"; bub.style.borderRadius=fromRight?"16px 16px 4px 16px":"16px 16px 16px 4px";
+      setTimeout(function(){ m.classList.remove("run"); bub.textContent=lines[li++%lines.length]; bub.classList.add("on") },1500);
+      setTimeout(leave,1500+5200);
+    }
+    function leave(){ if(!busy) return; bub.classList.remove("on"); var fromRight=m.classList.contains("flip");
+      setTimeout(function(){ m.classList.add("run"); place(fromRight?-140:innerWidth+40,!fromRight,1600);
+        setTimeout(function(){ m.classList.remove("run","go"); busy=false; arm() },1650) },300) }
+    m.addEventListener("click",function(){ if(!busy) return; var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+20,26); bub.textContent="Hehe! See you at the wedding! 🙏"; bub.classList.add("on") });
+    ["scroll","pointerdown","keydown"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
+    arm();
+  })();
   /* ---- floating dock ---- */
   (function(){
     var dock=document.getElementById("dock"), links=[].slice.call(dock.querySelectorAll("a")), scene=document.getElementById("scene");
@@ -875,7 +1015,6 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   function openEnv(){
     if(opened) return; opened=true;
     window.scrollTo(0,0); envEl.classList.add("open"); playMusic();
-    setTimeout(function(){ goldBurst(W/2,H*.62,90) }, reduce?0:380);
     root.classList.add("opened"); t0=performance.now();
     setTimeout(function(){ document.body.style.overflow=""; burst(W/2,H*.5,40) }, reduce?0:1500);
     setTimeout(function(){ envEl.classList.add("gone") }, reduce?0:2900);
