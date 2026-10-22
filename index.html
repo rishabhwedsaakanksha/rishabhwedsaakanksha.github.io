@@ -346,27 +346,25 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
 
 /* ---------- idle surprise: the mushak with a laddoo ---------- */
-.mushak{position:fixed;z-index:34;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:0;width:124px;transform:translateX(-160px);pointer-events:none;will-change:transform}
-.mushak.go{pointer-events:auto;cursor:pointer}
-.mk-body{position:relative;width:124px;aspect-ratio:380/311;filter:drop-shadow(0 8px 8px rgba(40,10,20,.28))}
-.mk-body>img,.mk-run{position:absolute;inset:0;width:100%;height:100%;transition:opacity .12s linear}
+.mushak{--mk:94px;position:fixed;z-index:34;bottom:calc(74px + env(safe-area-inset-bottom,0px));left:0;width:var(--mk);transform:translateX(-160px);pointer-events:none;will-change:transform;opacity:0;transition:opacity .25s}
+@media (min-width:600px){.mushak{--mk:116px}}
+.mushak.go{pointer-events:auto;cursor:pointer;opacity:1}
+.mk-body{position:relative;width:var(--mk);aspect-ratio:380/311;transform-origin:50% 100%;filter:drop-shadow(0 0 10px rgba(255,200,140,.18))}
+.mk-body>img,.mk-run{position:absolute;inset:0;width:100%;height:100%;transition:opacity .1s linear}
 .mk-body>img{object-fit:contain}
 .mk-run{overflow:hidden}
-.mk-run img{position:absolute;left:0;top:0;width:500%;max-width:none;height:100%;animation:mkframes .5s steps(5) infinite;animation-play-state:paused}
-.mushak.run .mk-run img{animation-play-state:running}
-@keyframes mkframes{to{transform:translateX(-100%)}}
+.mk-run img{position:absolute;left:0;top:0;width:500%;max-width:none;height:100%}
 .mk-sit{opacity:0}
 .mushak.run .mk-run{opacity:1}.mushak.run .mk-sit{opacity:0}
 .mushak:not(.run) .mk-run{opacity:0}.mushak:not(.run) .mk-sit{opacity:1}
-.mushak.run .mk-body{animation:mkgallop .5s ease-in-out infinite;transform-origin:50% 100%}
-.mushak.land .mk-body{animation:mkland .45s cubic-bezier(.3,1.5,.5,1)}
-.mushak.idle .mk-body{animation:mkbreath 2.2s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes mkgallop{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px) rotate(-1.5deg)}}
-@keyframes mkland{0%{transform:scale(1.06,.9)}60%{transform:scale(.97,1.04)}100%{transform:none}}
-@keyframes mkbreath{50%{transform:scale(1.015,.985) translateY(.5px)}}
-.mushak .dust{position:absolute;bottom:2px;left:6px;width:8px;height:8px;border-radius:50%;background:rgba(230,200,160,.55);pointer-events:none;animation:mkdust .6s ease-out forwards}
-@keyframes mkdust{to{transform:translate(-18px,-10px) scale(2.2);opacity:0}}
-.mk-bubble{position:absolute;bottom:104px;left:24px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
+.mk-shadow{position:absolute;left:18%;right:14%;bottom:-3px;height:9px;border-radius:50%;background:radial-gradient(closest-side,rgba(30,8,16,.38),rgba(30,8,16,0));transform-origin:50% 50%}
+.mushak.land .mk-body{animation:mkland .5s cubic-bezier(.3,1.5,.5,1)}
+.mushak.idle .mk-body{animation:mkbreath 2.4s ease-in-out infinite}
+@keyframes mkland{0%{transform:scale(1.07,.9)}55%{transform:scale(.97,1.04)}100%{transform:none}}
+@keyframes mkbreath{50%{transform:scale(1.012,.988)}}
+.mushak .dust{position:absolute;bottom:0;left:16%;width:7px;height:7px;border-radius:50%;background:rgba(232,204,170,.5);pointer-events:none;animation:mkdust .6s ease-out forwards}
+@keyframes mkdust{to{transform:translate(-16px,-8px) scale(2.2);opacity:0}}
+.mk-bubble{position:absolute;bottom:calc(var(--mk)*.86);left:14px;width:max-content;max-width:min(240px,64vw);padding:10px 14px;border-radius:16px 16px 16px 4px;
   background:var(--surface);color:var(--deep);border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);box-shadow:0 10px 24px -12px rgba(40,10,20,.5);
   font-family:var(--serif);font-size:16px;line-height:1.3;font-style:italic;opacity:0;transform:translateY(8px) scale(.9);transform-origin:0 100%;transition:opacity .35s,transform .35s cubic-bezier(.3,1.4,.5,1)}
 .mk-bubble.on{opacity:1;transform:none}
@@ -452,6 +450,7 @@ section[id]{scroll-margin-top:12px}
 <header class="topbar" id="topbar" aria-hidden="true"><div class="tb-n">Rishabh<i>&amp;</i>Aakanksha</div><div class="tb-d">9 &amp; 10 December 2026</div></header>
 <div class="mushak" id="mushak" aria-hidden="true">
   <div class="mk-bubble" id="mkBubble"></div>
+  <span class="mk-shadow"></span>
   <div class="mk-body">
     <div class="mk-run"><img src="mushak-run.webp" alt="" width="1900" height="311"></div>
     <img class="mk-sit" src="mushak-sit.webp" alt="" width="380" height="311">
@@ -916,39 +915,58 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
     if(!reduce) requestAnimationFrame(loop);
   })();
 
-  /* ---- idle surprise: if a guest lingers, Ganesh ji's mushak scurries in with a laddoo ---- */
+  /* ---- idle surprise: if a guest lingers, Ganesh ji's mushak scurries in with a modak ---- */
   (function(){
     var m=document.getElementById("mushak"), bub=document.getElementById("mkBubble"); if(!m||reduce) return;
-    var lines=["Arre! Abhi tak yahin ho? 🐭 Ganesh ji ne bheja hai, jaldi RSVP karo!",
-               "Ye modak mera hai… shaadi ki mithai saari aapki! 😋",
+    var body=m.querySelector(".mk-body"), sprite=m.querySelector(".mk-run img"), shadow=m.querySelector(".mk-shadow");
+    var lines=["Ye modak mera hai… shaadi ki mithai saari aapki! 😋",
                "Sangeet ki practice shuru kar di na? Dance floor aapka wait kar raha hai! 💃",
                "Baraat mein late mat hona… main itna chhota hoon, dhol akele nahi utha sakta! 🥁",
-               "Diet-shiet sab 10 December ke baad! Pehle shaadi ka khana 😄"];
-    var idleT=null, busy=false, shown=0, li=0, dustT=null;
-    function arm(){ clearTimeout(idleT); if(shown>=4) return; idleT=setTimeout(run, shown?14000:7000) }
-    function move(x,dur,ease){ m.style.transition="transform "+dur+"ms "+(ease||"linear"); m.style.transform="translateX("+x+"px)" }
-    function dust(on){ clearInterval(dustT); if(!on) return; dustT=setInterval(function(){ var d=document.createElement("span"); d.className="dust"; m.appendChild(d); setTimeout(function(){ d.remove() },650) },140) }
+               "Diet-shiet sab 10 December ke baad! Pehle shaadi ka khana 😄",
+               "Ganesh ji thode busy hain, isliye invite dene main aaya hoon! 🙏",
+               "Shaadi mein zaroor aana… varna aapke ghar ke saare modak main kha jaunga! 😜",
+               "Psst… dulhe ke joote chupaane ka plan bana liya kya? 👟🤫",
+               "Baraat mein Ganesh ji ki official sawaari main hi hoon! 😎"];
+    var bag=[], last=-1;
+    function nextLine(){ if(!bag.length){ bag=lines.map(function(_,i){return i}); for(var i=bag.length-1;i>0;i--){ var j=Math.random()*(i+1)|0, t=bag[i]; bag[i]=bag[j]; bag[j]=t } if(bag[0]===last) bag.push(bag.shift()) } last=bag.shift(); return lines[last] }
+    var idleT=null, busy=false, caught=false, shown=0, X=-160, raf=null, dustT=null, timers=[];
+    function later(fn,ms){ timers.push(setTimeout(fn,ms)) }
+    function arm(){ clearTimeout(idleT); if(caught||shown>=6) return; idleT=setTimeout(run,7000) }
+    function dust(on){ clearInterval(dustT); if(!on) return; dustT=setInterval(function(){ var d=document.createElement("span"); d.className="dust"; m.appendChild(d); setTimeout(function(){ d.remove() },650) },150) }
+    /* move with legs synced to ground speed, so the feet never slide */
+    function travel(to,dur,ease,done){
+      cancelAnimationFrame(raf); var from=X, t0=null, prev=from, dist=0, stride=m.offsetWidth*.62;
+      function step(now){ if(t0===null) t0=now; var k=Math.min(1,(now-t0)/dur), e=ease(k);
+        X=from+(to-from)*e; dist+=Math.abs(X-prev); prev=X;
+        var cyc=dist/stride, fi=Math.floor(cyc*5)%5, ph=(cyc%1), hop=Math.sin(ph*Math.PI)*Math.min(5,Math.abs(to-from)/60);
+        sprite.style.transform="translateX("+(-fi*20)+"%)";
+        m.style.transform="translateX("+X+"px)";
+        body.style.transform="translateY("+(-hop).toFixed(1)+"px) rotate("+(-Math.sin(ph*Math.PI*2)*1.2).toFixed(2)+"deg)";
+        shadow.style.transform="scale("+(1-hop*.05).toFixed(3)+")"; shadow.style.opacity=(1-hop*.08).toFixed(2);
+        if(k<1) raf=requestAnimationFrame(step); else { body.style.transform=""; shadow.style.transform=""; shadow.style.opacity=""; done&&done() } }
+      raf=requestAnimationFrame(step) }
+    var easeIn=function(k){ return 1-Math.pow(1-k,2.4) }, easeOut=function(k){ return Math.pow(k,1.7) };
     function run(){
-      if(busy || !root.classList.contains("opened") || document.hidden) return arm();
-      busy=true; shown++;
-      var stop=Math.max(12,Math.min(innerWidth*.08,48));
-      m.style.transition="none"; m.style.transform="translateX(-160px)"; void m.offsetWidth;
+      if(busy||caught||!root.classList.contains("opened")||document.hidden) return arm();
+      busy=true; shown++; X=-160; m.style.transform="translateX(-160px)";
       m.classList.remove("idle","land"); m.classList.add("run","go"); dust(true);
-      move(stop,1500,"cubic-bezier(.25,.6,.35,1)");                       /* runs in, slowing down */
-      setTimeout(function(){ dust(false); m.classList.remove("run"); m.classList.add("land");
-        setTimeout(function(){ m.classList.remove("land"); m.classList.add("idle") },450);
-        bub.textContent=lines[li++%lines.length]; bub.classList.add("on") },1500);
-      setTimeout(leave,1500+5200);
+      var stop=Math.max(10,Math.min(innerWidth*.06,40));
+      travel(stop,1900,easeIn,function(){ dust(false); m.classList.remove("run"); m.classList.add("land");
+        later(function(){ m.classList.remove("land"); m.classList.add("idle") },500);
+        later(function(){ bub.textContent=nextLine(); bub.classList.add("on") },250);
+        later(leave,5400) });
     }
     function leave(){ if(!busy) return; bub.classList.remove("on");
-      setTimeout(function(){ m.classList.remove("idle","land"); m.classList.add("run"); dust(true);
-        move(innerWidth+40,1700,"cubic-bezier(.55,0,.8,.4)");                /* speeds up and dashes off to the right */
-        setTimeout(function(){ dust(false); m.classList.remove("run","go"); busy=false; arm() },1750) },350) }
-    m.addEventListener("click",function(){ if(!busy) return; var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+20,26); bub.textContent="Hehe! Shaadi mein milte hain! 🙏"; bub.classList.add("on") });
+      later(function(){ m.classList.remove("idle","land"); m.classList.add("run"); dust(true);
+        travel(innerWidth+40,2100,easeOut,function(){ dust(false); m.classList.remove("run","go"); busy=false; arm() }) },300) }
+    m.addEventListener("click",function(){ if(!busy||caught) return; caught=true; clearTimeout(idleT); timers.forEach(clearTimeout); timers=[];
+      var r=m.getBoundingClientRect(); burst(r.left+r.width/2,r.top+10,30);
+      bub.textContent="Arre! Pakad liya? 😅 Theek hai, ab shaadi mein hi milenge! 🙏"; bub.classList.add("on");
+      if(m.classList.contains("run")){ cancelAnimationFrame(raf); dust(false); m.classList.remove("run"); m.classList.add("idle") }
+      later(leave,2600) });
     ["scroll","pointerdown","keydown"].forEach(function(ev){ addEventListener(ev,function(){ if(!busy) arm() },{passive:true}) });
     arm();
   })();
-
   /* ---- ornaments drawn live with a glowing golden pen tip ---- */
   (function(){
     var NS="http://www.w3.org/2000/svg", ors=[].slice.call(document.querySelectorAll("svg.orn"));
