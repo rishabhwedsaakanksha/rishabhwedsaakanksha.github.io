@@ -346,17 +346,22 @@ input[type=text],input[type=number],textarea{font:inherit;font-size:17px;color:v
 @media (prefers-reduced-motion:reduce){.cd b.flip{animation:none}}
 
 /* ---------- idle surprise: the mushak with a laddoo ---------- */
-.mushak{position:fixed;z-index:34;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:0;width:118px;transform:translateX(-160px);pointer-events:none;will-change:transform}
+.mushak{position:fixed;z-index:34;bottom:calc(78px + env(safe-area-inset-bottom,0px));left:0;width:124px;transform:translateX(-160px);pointer-events:none;will-change:transform}
 .mushak.go{pointer-events:auto;cursor:pointer}
-.mk-body{position:relative;width:118px;aspect-ratio:360/337;filter:drop-shadow(0 8px 8px rgba(40,10,20,.28))}
-.mk-body img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .12s linear}
+.mk-body{position:relative;width:124px;aspect-ratio:380/311;filter:drop-shadow(0 8px 8px rgba(40,10,20,.28))}
+.mk-body>img,.mk-run{position:absolute;inset:0;width:100%;height:100%;transition:opacity .12s linear}
+.mk-body>img{object-fit:contain}
+.mk-run{overflow:hidden}
+.mk-run img{position:absolute;left:0;top:0;width:500%;max-width:none;height:100%;animation:mkframes .5s steps(5) infinite;animation-play-state:paused}
+.mushak.run .mk-run img{animation-play-state:running}
+@keyframes mkframes{to{transform:translateX(-100%)}}
 .mk-sit{opacity:0}
 .mushak.run .mk-run{opacity:1}.mushak.run .mk-sit{opacity:0}
 .mushak:not(.run) .mk-run{opacity:0}.mushak:not(.run) .mk-sit{opacity:1}
-.mushak.run .mk-body{animation:mkgallop .32s cubic-bezier(.4,0,.6,1) infinite;transform-origin:50% 100%}
+.mushak.run .mk-body{animation:mkgallop .5s ease-in-out infinite;transform-origin:50% 100%}
 .mushak.land .mk-body{animation:mkland .45s cubic-bezier(.3,1.5,.5,1)}
 .mushak.idle .mk-body{animation:mkbreath 2.2s ease-in-out infinite;transform-origin:50% 100%}
-@keyframes mkgallop{0%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-9px) rotate(-4deg)}50%{transform:translateY(-3px) rotate(1deg)}75%{transform:translateY(-7px) rotate(-2deg)}}
+@keyframes mkgallop{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px) rotate(-1.5deg)}}
 @keyframes mkland{0%{transform:scale(1.06,.9)}60%{transform:scale(.97,1.04)}100%{transform:none}}
 @keyframes mkbreath{50%{transform:scale(1.015,.985) translateY(.5px)}}
 .mushak .dust{position:absolute;bottom:2px;left:6px;width:8px;height:8px;border-radius:50%;background:rgba(230,200,160,.55);pointer-events:none;animation:mkdust .6s ease-out forwards}
@@ -448,8 +453,8 @@ section[id]{scroll-margin-top:12px}
 <div class="mushak" id="mushak" aria-hidden="true">
   <div class="mk-bubble" id="mkBubble"></div>
   <div class="mk-body">
-    <img class="mk-run" src="mushak-run.png" alt="" width="360" height="337">
-    <img class="mk-sit" src="mushak-sit.png" alt="" width="360" height="337">
+    <div class="mk-run"><img src="mushak-run.webp" alt="" width="1900" height="311"></div>
+    <img class="mk-sit" src="mushak-sit.webp" alt="" width="380" height="311">
   </div>
 </div>
 <nav class="dock" id="dock" aria-label="Sections">
