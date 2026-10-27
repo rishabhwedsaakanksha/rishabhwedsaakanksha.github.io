@@ -85,6 +85,9 @@ button{font:inherit}
   font-family:var(--label);font-size:11px;letter-spacing:.16em;text-transform:uppercase;box-shadow:0 6px 18px -10px rgba(0,0,0,.4);transition:background .8s,color .8s}
 .pill svg{width:16px;height:16px}
 #music[hidden]{display:none}
+#music{width:38px;height:38px;padding:0;justify-content:center;position:relative}
+#music .off{position:absolute;left:9px;right:9px;top:50%;height:1.6px;background:currentColor;transform:rotate(-45deg);border-radius:2px}
+#music.playing .off{display:none}
 #music.playing svg{animation:spin 4s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
@@ -454,7 +457,7 @@ section[id]{scroll-margin-top:12px}
 <canvas id="petals" aria-hidden="true"></canvas>
 
 <div class="ctl">
-  <button class="pill" id="music" hidden aria-label="Play music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></button>
+  <button class="pill" id="music" hidden aria-label="Play music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><span class="off"></span></button>
   <button class="pill" id="mode" aria-label="Switch to night view">
     <svg id="mode-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
     <span id="mode-tx">Night</span>
@@ -729,7 +732,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
 <script>
 (function(){
   var RSVP_NUMBER = "";          /* e.g. "919876543210" — leave empty to let the guest pick the contact */
-  var MUSIC_FILE = "";           /* e.g. "music.mp3" once a song is added */
+  var MUSIC_FILE = "music.mp3";
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var root = document.documentElement;
 
@@ -1085,9 +1088,16 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   /* ---- music ---- */
   var mBtn=document.getElementById("music"), audio=null;
   if (MUSIC_FILE) mBtn.hidden=false;
-  function playMusic(){ if(!MUSIC_FILE) return; try{ if(!audio){audio=new Audio(MUSIC_FILE); audio.loop=true}
-    var pr=audio.play(); if(pr&&pr.then) pr.then(function(){mBtn.classList.add("playing")}).catch(function(){}) }catch(e){} }
-  mBtn.addEventListener("click",function(){ if(audio&&!audio.paused){audio.pause(); mBtn.classList.remove("playing")} else playMusic() });
+  var userPaused=false;
+  function playMusic(){ if(!MUSIC_FILE||userPaused) return; try{ if(!audio){ audio=new Audio(MUSIC_FILE); audio.loop=true; audio.preload="auto" }
+    var pr=audio.play(); if(pr&&pr.then) pr.then(function(){ mBtn.classList.add("playing"); mBtn.setAttribute("aria-label","Pause music") }).catch(function(){}) }catch(e){} }
+  mBtn.addEventListener("click",function(e){ e.stopPropagation();
+    if(audio&&!audio.paused){ audio.pause(); userPaused=true; mBtn.classList.remove("playing"); mBtn.setAttribute("aria-label","Play music") }
+    else { userPaused=false; playMusic() } });
+  /* pause when the guest switches apps or tabs, resume when they come back */
+  document.addEventListener("visibilitychange",function(){ if(!audio) return;
+    if(document.hidden){ if(!audio.paused){ audio.pause(); audio._auto=true } }
+    else if(audio._auto && !userPaused){ audio._auto=false; playMusic() } });
 
   /* ---- gate + reveals ---- */
   function reveal(){
