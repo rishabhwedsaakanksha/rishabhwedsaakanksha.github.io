@@ -1088,25 +1088,41 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   /* ---- music ---- */
   var mBtn=document.getElementById("music"), audio=null;
   if (MUSIC_FILE) mBtn.hidden=false;
-  var userPaused=false, actx=null, gainN=null, started=false;
-  /* load the song as soon as the page opens, so it is ready the moment the envelope is tapped */
-  if(MUSIC_FILE){ try{ audio=new Audio(MUSIC_FILE); audio.loop=true; audio.preload="auto"; audio.load() }catch(e){} }
-  function graph(){ if(actx||!audio) return; var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
-    try{ actx=new AC(); var src=actx.createMediaElementSource(audio); gainN=actx.createGain(); gainN.gain.value=0; src.connect(gainN); gainN.connect(actx.destination) }catch(e){ actx=null; gainN=null } }
-  function fadeIn(sec){ if(gainN){ var t=actx.currentTime; gainN.gain.cancelScheduledValues(t); gainN.gain.setValueAtTime(0.0001,t); gainN.gain.exponentialRampToValueAtTime(0.35,t+sec*.35); gainN.gain.linearRampToValueAtTime(1,t+sec) }
-    else { var v=0; audio.volume=0; var iv=setInterval(function(){ v=Math.min(1,v+0.05); try{ audio.volume=v }catch(e){} if(v>=1) clearInterval(iv) }, sec*1000/20) } }
-  function playMusic(){ if(!MUSIC_FILE||userPaused) return; try{
-      if(!audio){ audio=new Audio(MUSIC_FILE); audio.loop=true }
-      graph(); if(actx&&actx.state!=="running") actx.resume();
-      if(!audio.paused) return; fadeIn(started?1.2:3.5); started=true;
-      var pr=audio.play(); if(pr&&pr.then) pr.then(function(){ mBtn.classList.add("playing"); mBtn.setAttribute("aria-label","Pause music") }).catch(function(){}) }catch(e){} }
+  /* Web Audio buffer playback: sample-accurate, gap-free looping and smooth fades.
+     Falls back to a plain <audio> element on very old browsers. */
+  var AC=window.AudioContext||window.webkitAudioContext, actx=null, gainN=null, buf=null, srcN=null,
+      wantPlay=false, userPaused=false, playing=false, startedAt=0, offset=0, firstStart=true;
+  try{ if(navigator.audioSession) navigator.audioSession.type="playback" }catch(e){}   /* iPhone: play even in silent mode */
+  if(MUSIC_FILE && AC && window.fetch){
+    try{ actx=new AC(); gainN=actx.createGain(); gainN.gain.value=0; gainN.connect(actx.destination) }catch(e){ actx=null }
+  }
+  if(actx){
+    fetch(MUSIC_FILE).then(function(r){ return r.arrayBuffer() })
+      .then(function(ab){ return new Promise(function(res,rej){ actx.decodeAudioData(ab,res,rej) }) })
+      .then(function(b){ buf=b; if(wantPlay&&!userPaused) startBuf() })
+      .catch(function(){ actx=null; useElement() });
+  } else if(MUSIC_FILE){ useElement() }
+  function useElement(){ try{ audio=new Audio(MUSIC_FILE); audio.loop=true; audio.preload="auto"; audio.load(); if(wantPlay&&!userPaused) playMusic() }catch(e){} }
+  function setBtn(on){ playing=on; mBtn.classList.toggle("playing",on); mBtn.setAttribute("aria-label",on?"Pause music":"Play music") }
+  function startBuf(){ if(playing||!buf) return;
+    srcN=actx.createBufferSource(); srcN.buffer=buf; srcN.loop=true; srcN.connect(gainN);
+    var t=actx.currentTime, fade=firstStart?3.5:1.2; firstStart=false;
+    gainN.gain.cancelScheduledValues(t); gainN.gain.setValueAtTime(0.0001,t);
+    gainN.gain.exponentialRampToValueAtTime(0.35,t+fade*.35); gainN.gain.linearRampToValueAtTime(1,t+fade);
+    offset=offset%buf.duration; srcN.start(t,offset); startedAt=t-offset; setBtn(true) }
+  function stopBuf(){ if(!playing||!srcN) return; var t=actx.currentTime, s=srcN;
+    offset=(t-startedAt)%buf.duration; gainN.gain.cancelScheduledValues(t); gainN.gain.setValueAtTime(gainN.gain.value,t); gainN.gain.linearRampToValueAtTime(0.0001,t+.3);
+    s.stop(t+.32); srcN=null; setBtn(false) }
+  function playMusic(){ if(!MUSIC_FILE||userPaused) return; wantPlay=true;
+    if(actx){ if(actx.state!=="running"){ try{ actx.resume() }catch(e){} } if(buf) startBuf(); return }
+    if(audio && audio.paused){ var pr=audio.play(); if(pr&&pr.then) pr.then(function(){ setBtn(true) }).catch(function(){}) } }
   mBtn.addEventListener("click",function(e){ e.stopPropagation();
-    if(audio&&!audio.paused){ audio.pause(); userPaused=true; mBtn.classList.remove("playing"); mBtn.setAttribute("aria-label","Play music") }
+    if(playing){ userPaused=true; if(actx) stopBuf(); else { audio.pause(); setBtn(false) } }
     else { userPaused=false; playMusic() } });
   /* pause when the guest switches apps or tabs, resume when they come back */
-  document.addEventListener("visibilitychange",function(){ if(!audio) return;
-    if(document.hidden){ if(!audio.paused){ audio.pause(); audio._auto=true } }
-    else if(audio._auto && !userPaused){ audio._auto=false; playMusic() } });
+  document.addEventListener("visibilitychange",function(){
+    if(document.hidden){ if(actx&&actx.state==="running") actx.suspend(); else if(audio&&!audio.paused){ audio.pause(); audio._auto=true } }
+    else if(!userPaused){ if(actx&&wantPlay){ try{ actx.resume() }catch(e){} } else if(audio&&audio._auto){ audio._auto=false; playMusic() } } });
 
   /* ---- gate + reveals ---- */
   function reveal(){
@@ -1131,7 +1147,7 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   envEl.addEventListener("click", openEnv);
   envEl.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); openEnv() } });
   /* music starts on the guest's first tap anywhere (browsers block autoplay with sound) */
-  document.addEventListener("pointerdown", function once(){ document.removeEventListener("pointerdown", once); if(!audio) playMusic() });
+  document.addEventListener("pointerdown", function once(){ document.removeEventListener("pointerdown", once); if(!wantPlay) playMusic() });
 })();
 </script>
 <script async src="https://www.instagram.com/embed.js"></script>
