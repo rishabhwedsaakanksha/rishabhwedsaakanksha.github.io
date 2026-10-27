@@ -1088,9 +1088,18 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
   /* ---- music ---- */
   var mBtn=document.getElementById("music"), audio=null;
   if (MUSIC_FILE) mBtn.hidden=false;
-  var userPaused=false;
-  function playMusic(){ if(!MUSIC_FILE||userPaused) return; try{ if(!audio){ audio=new Audio(MUSIC_FILE); audio.loop=true; audio.preload="auto" }
-    var pr=audio.play(); if(pr&&pr.then) pr.then(function(){ mBtn.classList.add("playing"); mBtn.setAttribute("aria-label","Pause music") }).catch(function(){}) }catch(e){} }
+  var userPaused=false, actx=null, gainN=null, started=false;
+  /* load the song as soon as the page opens, so it is ready the moment the envelope is tapped */
+  if(MUSIC_FILE){ try{ audio=new Audio(MUSIC_FILE); audio.loop=true; audio.preload="auto"; audio.load() }catch(e){} }
+  function graph(){ if(actx||!audio) return; var AC=window.AudioContext||window.webkitAudioContext; if(!AC) return;
+    try{ actx=new AC(); var src=actx.createMediaElementSource(audio); gainN=actx.createGain(); gainN.gain.value=0; src.connect(gainN); gainN.connect(actx.destination) }catch(e){ actx=null; gainN=null } }
+  function fadeIn(sec){ if(gainN){ var t=actx.currentTime; gainN.gain.cancelScheduledValues(t); gainN.gain.setValueAtTime(0.0001,t); gainN.gain.exponentialRampToValueAtTime(0.35,t+sec*.35); gainN.gain.linearRampToValueAtTime(1,t+sec) }
+    else { var v=0; audio.volume=0; var iv=setInterval(function(){ v=Math.min(1,v+0.05); try{ audio.volume=v }catch(e){} if(v>=1) clearInterval(iv) }, sec*1000/20) } }
+  function playMusic(){ if(!MUSIC_FILE||userPaused) return; try{
+      if(!audio){ audio=new Audio(MUSIC_FILE); audio.loop=true }
+      graph(); if(actx&&actx.state!=="running") actx.resume();
+      if(!audio.paused) return; fadeIn(started?1.2:3.5); started=true;
+      var pr=audio.play(); if(pr&&pr.then) pr.then(function(){ mBtn.classList.add("playing"); mBtn.setAttribute("aria-label","Pause music") }).catch(function(){}) }catch(e){} }
   mBtn.addEventListener("click",function(e){ e.stopPropagation();
     if(audio&&!audio.paused){ audio.pause(); userPaused=true; mBtn.classList.remove("playing"); mBtn.setAttribute("aria-label","Play music") }
     else { userPaused=false; playMusic() } });
