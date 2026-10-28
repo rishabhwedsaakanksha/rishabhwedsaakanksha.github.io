@@ -1073,6 +1073,12 @@ addEventListener("beforeunload",function(){ window.scrollTo(0,0) });
       [].forEach.call(dots.children,function(d,i){ d.classList.toggle("on",i===best) }) }
     row.addEventListener("scroll",upd,{passive:true}); addEventListener("resize",upd); upd();
   })();
+  /* ---- in-page links scroll smoothly without adding #section to the address bar ---- */
+  document.addEventListener("click",function(e){ var l=e.target.closest&&e.target.closest('a[href^="#"]'); if(!l) return;
+    var id=l.getAttribute("href").slice(1), t=id&&document.getElementById(id); if(!t) return;
+    e.preventDefault(); t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});
+    try{ if(location.hash) history.replaceState(null,"",location.pathname+location.search) }catch(_){} });
+  try{ if(location.hash) history.replaceState(null,"",location.pathname+location.search) }catch(_){}
   /* ---- RSVP via WhatsApp ---- */
   document.getElementById("rsvp").addEventListener("submit",function(e){
     e.preventDefault();
