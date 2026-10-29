@@ -249,7 +249,8 @@ html[data-mode="day"] .g-halo:before{background:radial-gradient(circle,rgba(255,
 }
 
 /* ---------- Dress code ---------- */
-.dress{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:28px;text-align:left}
+.dress{display:flex;flex-wrap:wrap;justify-content:center;gap:22px;margin-top:28px;text-align:left}
+.dress>.dc{flex:0 0 calc((100% - 44px)/3)}
 .dc{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;
   box-shadow:0 0 0 5px color-mix(in srgb,var(--surface) 40%,transparent),0 22px 36px -26px rgba(0,0,0,.55);transition:transform .35s ease,background .8s}
 .dc:hover{transform:translateY(-4px)}
@@ -269,7 +270,8 @@ html[data-mode="day"] .g-halo:before{background:radial-gradient(circle,rgba(255,
 @media (max-width:760px){
   .dress{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 16px 12px;margin-left:-16px;margin-right:-16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .dress::-webkit-scrollbar{display:none}
-  .dc{flex:0 0 82%;scroll-snap-align:center}
+  .dress>.dc{flex:0 0 82%;scroll-snap-align:center}
+  .dress{flex-wrap:nowrap;justify-content:flex-start}
   .dress-dots{display:flex;justify-content:center;gap:7px;margin-top:10px}
   .dress-dots b{width:7px;height:7px;border-radius:50%;background:var(--line);transition:all .3s}
   .dress-dots b.on{width:20px;border-radius:6px;background:var(--rg)}
@@ -591,15 +593,6 @@ section[id]{scroll-margin-top:12px}
             <div class="theme">Sunshine Bloom</div>
             <ul class="chips"><li><i style="background:#F7E36A"></i>Lemon Yellow</li><li><i style="background:#F6E39B"></i>Butter Yellow</li><li><i style="background:#F2B91E"></i>Golden Yellow</li><li><i style="background:#D4A52A"></i>Mustard Yellow</li></ul>
             <p>All shades of yellow with florals. Comfy footwear for the poolside.</p>
-          </div>
-        </article>
-        <article class="dc rv">
-          <div class="pic"><img src="dc-mandap.jpg" alt="Mandap Pujan outfit inspiration" loading="lazy" width="640" height="640"><span class="when">Wed 9 Dec · 3:00 PM</span></div>
-          <div class="dc-body">
-            <h3>Mandap Pujan</h3>
-            <div class="theme">Pastel Charm</div>
-            <ul class="chips"><li><i style="background:#F2C3BE"></i>Blush Pink</li><li><i style="background:#BFDCC8"></i>Mint Green</li><li><i style="background:#C6D8EC"></i>Powder Blue</li><li><i style="background:#D6C6E8"></i>Lavender</li></ul>
-            <p>Soft pastels with light embroidery. Elegant and easy for a long afternoon.</p>
           </div>
         </article>
         <article class="dc rv">
